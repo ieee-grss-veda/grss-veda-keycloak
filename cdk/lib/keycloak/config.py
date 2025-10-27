@@ -115,6 +115,15 @@ class KeycloakConfig(Construct):
             },
         )
 
+        # Grant read permissions to all secrets used by the config task
+        admin_secret.grant_read(config_task_def.execution_role)
+
+        for client_slug, secret in imported_client_secrets:
+            secret.grant_read(config_task_def.execution_role)
+
+        for client_slug, secret in created_client_secrets:
+            secret.grant_read(config_task_def.execution_role)
+
         # Helper to simplify triggering the ECS task
         code = f"""
             const {{ ECSClient, RunTaskCommand }} = require('@aws-sdk/client-ecs');
