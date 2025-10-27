@@ -7,6 +7,7 @@ from aws_cdk import (
     Stack,
     aws_ecr_assets as ecr_assets,
     aws_ecs as ecs,
+    aws_iam as iam,
     aws_lambda as _lambda,
     aws_secretsmanager as secretsmanager,
 )
@@ -115,14 +116,19 @@ class KeycloakConfig(Construct):
             },
         )
 
-        # Grant read permissions to all secrets used by the config task
-        admin_secret.grant_read(config_task_def.execution_role)
-
-        for client_slug, secret in imported_client_secrets:
-            secret.grant_read(config_task_def.execution_role)
-
-        for client_slug, secret in created_client_secrets:
-            secret.grant_read(config_task_def.execution_role)
+        # Explicitly grant GetSecretValue permission for imported IdP secrets
+        if imported_client_secrets:
+            idp_secret_arns = [secret.secret_arn for _, secret in imported_client_secrets]
+            config_task_def.execution_role.add_to_policy(
+                iam.PolicyStatement(
+                    effect=iam.Effect.ALLOW,
+                    actions=[
+                        "secretsmanager:GetSecretValue",
+                        "secretsmanager:DescribeSecret",
+                    ],
+                    resources=idp_secret_arns,
+                )
+            )
 
         # Helper to simplify triggering the ECS task
         code = f"""
