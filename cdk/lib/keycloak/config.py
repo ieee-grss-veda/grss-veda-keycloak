@@ -68,7 +68,7 @@ class KeycloakConfig(Construct):
         # Import the client secrets for each public clients
         imported_client_secrets = []
         for client_slug, secret_arn in idp_oauth_client_secrets.items():
-            imported_secret = secretsmanager.Secret.from_secret_complete_arn(
+            imported_secret = secretsmanager.Secret.from_secret_partial_arn(
                 self, f"{client_slug}-client-secret", secret_arn
             )
             imported_client_secrets.append((client_slug, imported_secret))
