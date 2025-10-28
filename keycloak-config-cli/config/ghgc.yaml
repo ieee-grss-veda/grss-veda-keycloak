@@ -1,5 +1,5 @@
 ---
-enabled: true
+enabled: false
 realm: ghgc
 displayName: Applications
 displayNameHtml: GHGC 
