@@ -37,6 +37,9 @@ class KeycloakConfig(Construct):
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
+        # Ensure hostname has https:// prefix for OAuth client URLs
+        public_url = hostname if hostname.startswith("http") else f"https://{hostname}"
+
         # Create a client secret for each private OAuth client
         created_client_secrets = []
         for client_info in private_oauth_clients:
@@ -54,9 +57,9 @@ class KeycloakConfig(Construct):
                     secret_string_template=json.dumps(
                         {
                             "id": client_slug,
-                            "auth_url": f"{hostname}/realms/{realm}/protocol/openid-connect/auth",
-                            "token_url": f"{hostname}/realms/{realm}/protocol/openid-connect/token",
-                            "userinfo_url": f"{hostname}/realms/{realm}/protocol/openid-connect/userinfo",
+                            "auth_url": f"{public_url}/realms/{realm}/protocol/openid-connect/auth",
+                            "token_url": f"{public_url}/realms/{realm}/protocol/openid-connect/token",
+                            "userinfo_url": f"{public_url}/realms/{realm}/protocol/openid-connect/userinfo",
                         },
                         separators=(",", ":"),
                     ),
@@ -97,7 +100,8 @@ class KeycloakConfig(Construct):
                 build_args={"KEYCLOAK_CONFIG_CLI_VERSION": version},
             ),
             environment={
-                "KEYCLOAK_URL": hostname,
+                # Ensure HTTPS protocol is included for Keycloak URL
+                "KEYCLOAK_URL": public_url,
                 "KEYCLOAK_AVAILABILITYCHECK_ENABLED": "true",
                 "KEYCLOAK_AVAILABILITYCHECK_TIMEOUT": "120s",
                 "IMPORT_FILES_LOCATIONS": "/config/*",
