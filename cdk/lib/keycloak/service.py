@@ -126,6 +126,9 @@ class KeycloakService(Construct):
                     "KC_HTTP_ENABLED": "true",
                     "KC_HTTP_MANAGEMENT_PORT": str(health_management_port),
                     "KC_HEALTH_ENABLED": "true",
+                    # Trust proxy headers from ALB (X-Forwarded-* headers)
+                    "KC_PROXY_HEADERS": "xforwarded",
+                    "KC_HOSTNAME_STRICT": "false",
                 },
                 secrets={
                     # Database credentials
