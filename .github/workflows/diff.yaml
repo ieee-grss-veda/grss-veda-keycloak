@@ -57,7 +57,6 @@ jobs:
           CONFIGURE_ROUTE53: ${{ vars.CONFIGURE_ROUTE53 }}
           # Imported Identity Provider secrets
           IDP_SECRET_ARN_GH: ${{ vars.IDP_SECRET_ARN_GH }}
-          # IDP_SECRET_ARN_CILOGON: ${{ vars.IDP_SECRET_ARN_CILOGON }}
 
       - name: Diff CDK
         uses: corymhall/cdk-diff-action@v2

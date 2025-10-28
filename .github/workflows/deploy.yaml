@@ -69,7 +69,6 @@ jobs:
           STAGE: ${{ inputs.environment }}
           # Imported Identity Provider secrets
           IDP_SECRET_ARN_GH: ${{ vars.IDP_SECRET_ARN_GH }}
-          # IDP_SECRET_ARN_CILOGON: ${{ vars.IDP_SECRET_ARN_CILOGON }}
           RDS_SNAPSHOT_IDENTIFIER: ${{ vars.RDS_SNAPSHOT_IDENTIFIER }}
           CONFIGURE_ROUTE53: ${{ vars.CONFIGURE_ROUTE53 }}
 
