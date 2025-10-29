@@ -5,43 +5,43 @@ displayName: Applications
 displayNameHtml: VEDA Ecosystem
 
 clients:
-  - clientId: grafana
-    name: Grafana
-    rootUrl: $(env:GRAFANA_CLIENT_URL)
-    secret: $(env:GRAFANA_CLIENT_SECRET)
-    publicClient: false
-    attributes: {}
-    redirectUris:
-      - $(env:GRAFANA_CLIENT_URL)/*
-    webOrigins:
-      - $(env:GRAFANA_CLIENT_URL)
-    protocol: openid-connect
-    fullScopeAllowed: true
-    defaultClientScopes:
-      - web-origins
-      - acr
-      - profile
-      - roles
-      - basic
-      - email
-    protocolMappers:
-      # We ensure that user's client roles are injected into the userinfo so that Grafana
-      # can retrieve them via the `role_attribute_path` JMES expression.
-      - name: client-roles-claim
-        protocol: openid-connect
-        protocolMapper: oidc-usermodel-client-role-mapper
-        config:
-          access.token.claim: "false"
-          lightweight.claim: "false"
-          userinfo.token.claim: "true"
-          id.token.claim: "true"
-          introspection.token.claim: "true"
+  # - clientId: grafana
+  #   name: Grafana
+  #   rootUrl: $(env:GRAFANA_CLIENT_URL)
+  #   secret: $(env:GRAFANA_CLIENT_SECRET)
+  #   publicClient: false
+  #   attributes: {}
+  #   redirectUris:
+  #     - $(env:GRAFANA_CLIENT_URL)/*
+  #   webOrigins:
+  #     - $(env:GRAFANA_CLIENT_URL)
+  #   protocol: openid-connect
+  #   fullScopeAllowed: true
+  #   defaultClientScopes:
+  #     - web-origins
+  #     - acr
+  #     - profile
+  #     - roles
+  #     - basic
+  #     - email
+  #   protocolMappers:
+  #     # We ensure that user's client roles are injected into the userinfo so that Grafana
+  #     # can retrieve them via the `role_attribute_path` JMES expression.
+  #     - name: client-roles-claim
+  #       protocol: openid-connect
+  #       protocolMapper: oidc-usermodel-client-role-mapper
+  #       config:
+  #         access.token.claim: "false"
+  #         lightweight.claim: "false"
+  #         userinfo.token.claim: "true"
+  #         id.token.claim: "true"
+  #         introspection.token.claim: "true"
 
-          claim.name: roles
-          jsonType.label: String
-          multivalued: "true"
-          usermodel.clientRoleMapping.clientId: grafana # Filter-out non-Grafana roles
-          usermodel.clientRoleMapping.rolePrefix: ""
+  #         claim.name: roles
+  #         jsonType.label: String
+  #         multivalued: "true"
+  #         usermodel.clientRoleMapping.clientId: grafana # Filter-out non-Grafana roles
+  #         usermodel.clientRoleMapping.rolePrefix: ""
 
   - clientId: stac
     name: STAC Catalog
@@ -88,7 +88,7 @@ clients:
       - stac:collection:delete
     defaultClientScopes:
       - roles
-  
+
   - clientId: ingest-api
     name: STAC Ingest API
     rootUrl: $(env:INGEST_API_CLIENT_URL)
@@ -136,105 +136,36 @@ clients:
       - stac:collection:delete
     defaultClientScopes:
       - roles
-    
-  - clientId: jupyterhub-maap
-    name: MAAP JupyterHub
-    # Staging JupyterHub is at https://staging.hub.maap.2i2c.cloud
-    # Prod JupyterHub is at https://hub.maap.2i2c.cloud
-    rootUrl: $(env:JUPYTERHUB_MAAP_CLIENT_URL)
-    secret: $(env:JUPYTERHUB_MAAP_CLIENT_SECRET)
-    publicClient: false
-    attributes: {}
-    redirectUris:
-      - $(env:JUPYTERHUB_MAAP_CLIENT_URL)/hub/oauth_callback
-    protocol: openid-connect
-    fullScopeAllowed: true
-    defaultClientScopes: &jupyterhub-default-client-scopes
-      - basic
-      - profile
-    protocolMappers:
-      - name: client-roles-claim
-        protocol: openid-connect
-        protocolMapper: oidc-usermodel-client-role-mapper
-        config:
-          access.token.claim: "false"
-          userinfo.token.claim: "true"
-          id.token.claim: "true"
-          claim.name: roles
-          jsonType.label: String
-          multivalued: "true"
-          usermodel.clientRoleMapping.clientId: jupyterhub-maap
-          usermodel.clientRoleMapping.rolePrefix: ""
 
-  - clientId: jupyterhub-disasters
-    name: Disasters JupyterHub
-    # Staging JupyterHub is at https://staging.hub.disasters.2i2c.cloud
-    # Prod JupyterHub is at https://hub.disasters.2i2c.cloud
-    rootUrl: $(env:JUPYTERHUB_DISASTERS_CLIENT_URL)
-    secret: $(env:JUPYTERHUB_DISASTERS_CLIENT_SECRET)
-    publicClient: false
-    attributes: {}
-    redirectUris:
-      - $(env:JUPYTERHUB_DISASTERS_CLIENT_URL)/hub/oauth_callback
-    protocol: openid-connect
-    fullScopeAllowed: true
-    defaultClientScopes: *jupyterhub-default-client-scopes
-    protocolMappers:
-      - name: client-roles-claim
-        protocol: openid-connect
-        protocolMapper: oidc-usermodel-client-role-mapper
-        config:
-          access.token.claim: "false"
-          userinfo.token.claim: "true"
-          id.token.claim: "true"
-          claim.name: roles
-          jsonType.label: String
-          multivalued: "true"
-          usermodel.clientRoleMapping.clientId: jupyterhub-disasters
-          usermodel.clientRoleMapping.rolePrefix: ""
+  # - clientId: jupyterhub-maap
+  #   name: MAAP JupyterHub
+  #   # Staging JupyterHub is at https://staging.hub.maap.2i2c.cloud
+  #   # Prod JupyterHub is at https://hub.maap.2i2c.cloud
+  #   rootUrl: $(env:JUPYTERHUB_MAAP_CLIENT_URL)
+  #   secret: $(env:JUPYTERHUB_MAAP_CLIENT_SECRET)
+  #   publicClient: false
+  #   attributes: {}
+  #   redirectUris:
+  #     - $(env:JUPYTERHUB_MAAP_CLIENT_URL)/hub/oauth_callback
+  #   protocol: openid-connect
+  #   fullScopeAllowed: true
+  #   defaultClientScopes: &jupyterhub-default-client-scopes
+  #     - basic
+  #     - profile
+  #   protocolMappers:
+  #     - name: client-roles-claim
+  #       protocol: openid-connect
+  #       protocolMapper: oidc-usermodel-client-role-mapper
+  #       config:
+  #         access.token.claim: "false"
+  #         userinfo.token.claim: "true"
+  #         id.token.claim: "true"
+  #         claim.name: roles
+  #         jsonType.label: String
+  #         multivalued: "true"
+  #         usermodel.clientRoleMapping.clientId: jupyterhub-maap
+  #         usermodel.clientRoleMapping.rolePrefix: ""
 
-  - clientId: ingest-ui
-    name: Ingest UI
-    rootUrl: $(env:INGEST_UI_CLIENT_URL)
-    secret: $(env:INGEST_UI_CLIENT_SECRET)
-    publicClient: false
-    attributes: {}
-    redirectUris:
-      - $(env:INGEST_UI_CLIENT_URL)/*
-    webOrigins:
-      - $(env:INGEST_UI_CLIENT_URL)
-    protocol: openid-connect
-    fullScopeAllowed: true
-    defaultClientScopes:
-      - web-origins
-      - acr
-      - profile
-      - roles
-      - basic
-      - email
-      - dataset:create
-      - dataset:update
-  
-  - clientId: discourse-forum
-    name: Discourse
-    rootUrl: $(env:DISCOURSE_FORUM_CLIENT_URL)
-    secret: $(env:DISCOURSE_FORUM_CLIENT_SECRET)
-    publicClient: false
-    attributes: {}
-    redirectUris:
-      - $(env:DISCOURSE_FORUM_CLIENT_URL)/*
-    webOrigins:
-      - $(env:DISCOURSE_FORUM_CLIENT_URL)
-    protocol: openid-connect
-    fullScopeAllowed: true
-    defaultClientScopes:
-      - web-origins
-      - acr
-      - profile
-      - roles
-      - basic
-      - email
-      
 roles:
   client:
     grafana:
