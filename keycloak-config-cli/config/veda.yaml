@@ -5,44 +5,6 @@ displayName: Applications
 displayNameHtml: VEDA Ecosystem
 
 clients:
-  # - clientId: grafana
-  #   name: Grafana
-  #   rootUrl: $(env:GRAFANA_CLIENT_URL)
-  #   secret: $(env:GRAFANA_CLIENT_SECRET)
-  #   publicClient: false
-  #   attributes: {}
-  #   redirectUris:
-  #     - $(env:GRAFANA_CLIENT_URL)/*
-  #   webOrigins:
-  #     - $(env:GRAFANA_CLIENT_URL)
-  #   protocol: openid-connect
-  #   fullScopeAllowed: true
-  #   defaultClientScopes:
-  #     - web-origins
-  #     - acr
-  #     - profile
-  #     - roles
-  #     - basic
-  #     - email
-  #   protocolMappers:
-  #     # We ensure that user's client roles are injected into the userinfo so that Grafana
-  #     # can retrieve them via the `role_attribute_path` JMES expression.
-  #     - name: client-roles-claim
-  #       protocol: openid-connect
-  #       protocolMapper: oidc-usermodel-client-role-mapper
-  #       config:
-  #         access.token.claim: "false"
-  #         lightweight.claim: "false"
-  #         userinfo.token.claim: "true"
-  #         id.token.claim: "true"
-  #         introspection.token.claim: "true"
-
-  #         claim.name: roles
-  #         jsonType.label: String
-  #         multivalued: "true"
-  #         usermodel.clientRoleMapping.clientId: grafana # Filter-out non-Grafana roles
-  #         usermodel.clientRoleMapping.rolePrefix: ""
-
   - clientId: stac
     name: STAC Catalog
     rootUrl: $(env:STAC_CLIENT_URL)
@@ -137,46 +99,8 @@ clients:
     defaultClientScopes:
       - roles
 
-  # - clientId: jupyterhub-maap
-  #   name: MAAP JupyterHub
-  #   # Staging JupyterHub is at https://staging.hub.maap.2i2c.cloud
-  #   # Prod JupyterHub is at https://hub.maap.2i2c.cloud
-  #   rootUrl: $(env:JUPYTERHUB_MAAP_CLIENT_URL)
-  #   secret: $(env:JUPYTERHUB_MAAP_CLIENT_SECRET)
-  #   publicClient: false
-  #   attributes: {}
-  #   redirectUris:
-  #     - $(env:JUPYTERHUB_MAAP_CLIENT_URL)/hub/oauth_callback
-  #   protocol: openid-connect
-  #   fullScopeAllowed: true
-  #   defaultClientScopes: &jupyterhub-default-client-scopes
-  #     - basic
-  #     - profile
-  #   protocolMappers:
-  #     - name: client-roles-claim
-  #       protocol: openid-connect
-  #       protocolMapper: oidc-usermodel-client-role-mapper
-  #       config:
-  #         access.token.claim: "false"
-  #         userinfo.token.claim: "true"
-  #         id.token.claim: "true"
-  #         claim.name: roles
-  #         jsonType.label: String
-  #         multivalued: "true"
-  #         usermodel.clientRoleMapping.clientId: jupyterhub-maap
-  #         usermodel.clientRoleMapping.rolePrefix: ""
-
 roles:
   client:
-    # grafana:
-    #   - name: GrafanaAdmin
-    #     description: Has full instance-wide permissions to manage all organizations, users, and global settings.
-    #   - name: Admin
-    #     description: Manages an organization's settings, users, dashboards, and data sources within that specific organization.
-    #   - name: Editor
-    #     description: Can create, edit, and delete dashboards and data sources in an organization but cannot modify organization or user settings.
-    #   - name: Viewer
-    #     description: Can only view dashboards and panels without the ability to create or modify content.
     stac:
       - name: Admin
         description: Can create, update and delete STAC collections and items
@@ -187,29 +111,6 @@ roles:
         description: Can create, update and delete STAC collections and items
       - name: Editor
         description: Can create and update STAC collections and items
-    # jupyterhub-maap: &jupyterhub-roles
-    #   - name: Admin
-    #     description: Can use the JupyterHub Admin Panel
-    #   - name: CPU:XS
-    #     description: Access to extra small instances (~1.9GB RAM)
-    #   - name: CPU:S
-    #     description: Access to small instances (~3.7GB RAM)
-    #   - name: CPU:M
-    #     description: Access to medium instances (~7.4GB RAM)
-    #   - name: CPU:L
-    #     description: Access to large instances (~14.8GB RAM)
-    #   - name: CPU:XL
-    #     description: Access to extra large instances (~29.7GB RAM)
-    #   - name: CPU:XXL
-    #     description: Access to extra extra large instances (~60.6GB RAM)
-    #   - name: CPU:XXXL
-    #     description: Access to extra extra extra large instances (~121GB RAM)
-    #   - name: GPU:T4
-    #     description: Access to T4 GPU instances (1 T4 GPU)
-    # jupyterhub-disasters: *jupyterhub-roles
-    # ingest-ui:
-    #   - name: Editor
-    #     description: Can initiate and update dataset ingests
 
 clientScopeMappings:
   stac:
@@ -260,13 +161,6 @@ clientScopeMappings:
     - clientScope: stac:collection:delete
       roles:
         - Admin
-  # ingest-ui:
-  #   - clientScope: dataset:create
-  #     roles:
-  #       - Editor
-  #   - clientScope: dataset:update
-  #     roles:
-  #       - Editor
 
 clientScopes:
   - name: stac:item:create
@@ -297,88 +191,23 @@ clientScopes:
 groups:
   - name: System Administrators
     clientRoles:
-      # grafana:
-      #   - GrafanaAdmin
       stac:
         - Admin
       ingest-api:
         - Admin
-      # ingest-ui:
-      #   - Editor
-
   - name: Developers
     clientRoles:
-      # grafana:
-      #   - Editor
       stac:
         - Admin
       ingest-api:
         - Admin
-      # ingest-ui:
-      #   - Editor
 
   - name: Data Editors
     clientRoles:
-      # grafana:
-      #   - Viewer
       stac:
         - Editor
       ingest-api:
         - Editor
-      # ingest-ui:
-      #   - Editor
-      
-
-  # - name: JupyterHub MAAP Admin
-  #   clientRoles:
-  #     jupyterhub-maap:
-  #       - Admin
-
-  # - name: JupyterHub MAAP User
-  #   clientRoles:
-  #     jupyterhub-maap:
-  #       - CPU:XS
-  #       - CPU:S
-  #       - CPU:M
-  #       - CPU:L
-  #       - CPU:XL
-  #       - CPU:XXL
-  #       - CPU:XXL
-  #       - CPU:XXXL
-
-  # - name: JupyterHub MAAP Basic User
-  #   clientRoles:
-  #     jupyterhub-maap:
-  #       - CPU:XS
-  #       - CPU:M
-  #       - CPU:L
-  
-  # - name: JupyterHub MAAP GPU User
-  #   clientRoles:
-  #     jupyterhub-maap:
-  #       - GPU:T4
-
-  # - name: JupyterHub Disasters Admin
-  #   clientRoles:
-  #     jupyterhub-disasters:
-  #       - Admin
-
-  # - name: JupyterHub Disasters User
-  #   clientRoles:
-  #     jupyterhub-disasters:
-  #       - CPU:XS
-  #       - CPU:S
-  #       - CPU:M
-  #       - CPU:L
-  #       - CPU:XL
-  #       - CPU:XXL
-  #       - CPU:XXL
-  #       - CPU:XXXL
-
-  # - name: JupyterHub Disasters GPU User
-  #   clientRoles:
-  #     jupyterhub-disasters:
-  #       - GPU:T4
 
 identityProviders:
   # GitHub
@@ -503,4 +332,3 @@ users:
     clientRoles:
       ingest-api:
       - Admin
-
