@@ -16,6 +16,8 @@ clients:
       - $(env:STAC_CLIENT_URL)
     protocol: openid-connect
     fullScopeAllowed: true
+    optionalClientScopes:
+      - account-access
     defaultClientScopes:
       - web-origins
       - acr
@@ -64,6 +66,8 @@ clients:
       - $(env:INGEST_API_CLIENT_URL)
     protocol: openid-connect
     fullScopeAllowed: true
+    optionalClientScopes:
+      - account-access
     defaultClientScopes:
       - web-origins
       - acr
@@ -163,6 +167,17 @@ clientScopeMappings:
         - Admin
 
 clientScopes:
+  - name: account-access
+    description: Access to Keycloak account management API
+    protocol: openid-connect
+    protocolMappers:
+      - name: account-audience
+        protocol: openid-connect
+        protocolMapper: oidc-audience-mapper
+        config:
+          included.client.audience: account
+          id.token.claim: "false"
+          access.token.claim: "true"
   - name: stac:item:create
     description: Create STAC items
     protocol: openid-connect
