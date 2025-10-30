@@ -225,6 +225,11 @@ identityProviders:
       syncMode: "IMPORT"
       clientId: $(env:VEDA_GH_CLIENT_ID)
       clientSecret: $(env:VEDA_GH_CLIENT_SECRET)
+      defaultScope: openid read:org user:email
+      organization: ieee-grss-veda
+      team: $(env:GH_ADMIN_TEAM:-"jyaasa")
+      caseSensitiveOriginalUsername: "false"
+      
 identityProviderMappers:
   - name: "email"
     identityProviderAlias: github
