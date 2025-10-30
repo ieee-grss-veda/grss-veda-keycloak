@@ -223,8 +223,8 @@ identityProviders:
     linkOnly: false
     config:
       syncMode: "IMPORT"
-      clientId: $(env:GH_CLIENT_ID)
-      clientSecret: $(env:GH_CLIENT_SECRET)
+      clientId: $(env:VEDA_GH_CLIENT_ID)
+      clientSecret: $(env:VEDA_GH_CLIENT_SECRET)
 identityProviderMappers:
   - name: "email"
     identityProviderAlias: github
