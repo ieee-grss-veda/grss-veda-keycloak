@@ -16,8 +16,6 @@ clients:
       - $(env:STAC_CLIENT_URL)
     protocol: openid-connect
     fullScopeAllowed: true
-    optionalClientScopes:
-      - account-access
     defaultClientScopes:
       - web-origins
       - acr
@@ -25,6 +23,7 @@ clients:
       - roles
       - basic
       - email
+      - account-access
       - stac:item:create
       - stac:item:update
       - stac:item:delete
@@ -66,8 +65,6 @@ clients:
       - $(env:INGEST_API_CLIENT_URL)
     protocol: openid-connect
     fullScopeAllowed: true
-    optionalClientScopes:
-      - account-access
     defaultClientScopes:
       - web-origins
       - acr
@@ -75,6 +72,7 @@ clients:
       - roles
       - basic
       - email
+      - account-access
       - stac:item:create
       - stac:item:update
       - stac:item:delete
@@ -267,6 +265,18 @@ identityProviderMappers:
       syncMode: "IMPORT"
       jsonField: "name"
       userAttribute: "name"
+  - name: "account-view-profile"
+    identityProviderAlias: github
+    identityProviderMapper: oidc-hardcoded-role-idp-mapper
+    config:
+      syncMode: "FORCE"
+      role: "account.view-profile"
+  - name: "account-manage-account"
+    identityProviderAlias: github
+    identityProviderMapper: oidc-hardcoded-role-idp-mapper
+    config:
+      syncMode: "FORCE"
+      role: "account.manage-account"
 
 # Login Flow Configuration
 browserFlow: Browser without Password
