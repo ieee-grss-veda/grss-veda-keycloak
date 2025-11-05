@@ -5,6 +5,23 @@ displayName: Applications
 displayNameHtml: VEDA Ecosystem
 
 clients:
+  - clientId: account-console
+    name: Account Console
+    rootUrl: $(env:ACCOUNT_CONSOLE_URL)
+    publicClient: true
+    protocol: openid-connect
+    standardFlowEnabled: true
+    attributes: {}
+    redirectUris:
+      - $(env:ACCOUNT_CONSOLE_URL)/*
+    webOrigins:
+      - $(env:ACCOUNT_CONSOLE_URL)
+    defaultClientScopes:
+      - web-origins
+      - profile
+      - email
+      - roles
+
   - clientId: stac
     name: STAC Catalog
     rootUrl: $(env:STAC_CLIENT_URL)
@@ -23,7 +40,6 @@ clients:
       - roles
       - basic
       - email
-      - account-access
       - stac:item:create
       - stac:item:update
       - stac:item:delete
@@ -62,7 +78,7 @@ clients:
     redirectUris:
       - $(env:INGEST_API_CLIENT_URL)/*
     webOrigins:
-      - $(env:INGEST_API_CLIENT_URL)
+      - $(env:INGEST_API_WEB_ORIGIN)
     protocol: openid-connect
     fullScopeAllowed: true
     defaultClientScopes:
@@ -72,7 +88,6 @@ clients:
       - roles
       - basic
       - email
-      - account-access
       - stac:item:create
       - stac:item:update
       - stac:item:delete
@@ -101,6 +116,28 @@ clients:
     defaultClientScopes:
       - roles
 
+  - clientId: ingest-ui
+    name: Ingest UI
+    rootUrl: $(env:INGEST_UI_CLIENT_URL)
+    secret: $(env:INGEST_UI_CLIENT_SECRET)
+    publicClient: false
+    attributes: {}
+    redirectUris:
+      - $(env:INGEST_UI_CLIENT_URL)/*
+    webOrigins:
+      - $(env:INGEST_UI_CLIENT_URL)
+    protocol: openid-connect
+    fullScopeAllowed: true
+    defaultClientScopes:
+      - web-origins
+      - acr
+      - profile
+      - roles
+      - basic
+      - email
+      - dataset:create
+      - dataset:update
+
 roles:
   client:
     stac:
@@ -113,6 +150,9 @@ roles:
         description: Can create, update and delete STAC collections and items
       - name: Editor
         description: Can create and update STAC collections and items
+    ingest-ui:
+      - name: Editor
+        description: Can initiate and update dataset ingests
 
 clientScopeMappings:
   stac:
@@ -163,19 +203,15 @@ clientScopeMappings:
     - clientScope: stac:collection:delete
       roles:
         - Admin
+  ingest-ui:
+    - clientScope: dataset:create
+      roles:
+        - Editor
+    - clientScope: dataset:update
+      roles:
+        - Editor
 
 clientScopes:
-  - name: account-access
-    description: Access to Keycloak account management API
-    protocol: openid-connect
-    protocolMappers:
-      - name: account-audience
-        protocol: openid-connect
-        protocolMapper: oidc-audience-mapper
-        config:
-          included.client.audience: account
-          id.token.claim: "false"
-          access.token.claim: "true"
   - name: stac:item:create
     description: Create STAC items
     protocol: openid-connect
@@ -208,18 +244,25 @@ groups:
         - Admin
       ingest-api:
         - Admin
+      ingest-ui:
+        - Editor
+
   - name: Developers
     clientRoles:
       stac:
         - Admin
       ingest-api:
         - Admin
+      ingest-ui:
+        - Editor
 
   - name: Data Editors
     clientRoles:
       stac:
         - Editor
       ingest-api:
+        - Editor
+      ingest-ui:
         - Editor
 
 identityProviders:
@@ -242,7 +285,7 @@ identityProviders:
       organization: ieee-grss-veda
       team: $(env:GH_ADMIN_TEAM:-"jyaasa")
       caseSensitiveOriginalUsername: "false"
-      
+
 identityProviderMappers:
   - name: "email"
     identityProviderAlias: github
