@@ -465,6 +465,12 @@ identityProviderMappers:
     config:
       syncMode: "FORCE"
       role: "account.manage-account"
+  - name: "jupyterhub-default-user-group"
+    identityProviderAlias: github
+    identityProviderMapper: oidc-advanced-group-idp-mapper
+    config:
+      syncMode: "FORCE"
+      group: $(env:JUPYTERHUB_DEFAULT_GROUP:-JupyterHub Basic User)
 
 # Login Flow Configuration
 browserFlow: Browser without Password
