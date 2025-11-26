@@ -231,7 +231,7 @@ roles:
       - name: CPU:S
         description: Access to small instances (~3.7GB RAM)
       - name: CPU:M
-        description: Access to medium instances (~7.4GB RAM
+        description: Access to medium instances (~7.4GB RAM)
       - name: CPU:L
         description: Access to large instances (~14.8GB RAM)
       - name: CPU:XL
@@ -241,7 +241,7 @@ roles:
       - name: CPU:XXXL
         description: Access to extra extra extra large instances (~121GB RAM)
       - name: GPU:T4
-        description: Access to T4 GPU instances (1 T4 GPU
+        description: Access to T4 GPU instances (1 T4 GPU)
 
 
 clientScopeMappings:
