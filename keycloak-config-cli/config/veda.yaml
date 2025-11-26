@@ -162,6 +162,46 @@ clients:
       - basic
       - email
 
+  - clientId: jupyterhub
+    name: JupyterHub
+    rootUrl: $(env:JUPYTERHUB_CLIENT_URL)
+    secret: $(env:JUPYTERHUB_CLIENT_SECRET)
+    publicClient: false
+    attributes: {}
+    redirectUris:
+      - $(env:JUPYTERHUB_CLIENT_URL)/hub/oauth_callback
+    webOrigins:
+      - $(env:JUPYTERHUB_CLIENT_URL)
+    protocol: openid-connect
+    fullScopeAllowed: true
+    defaultClientScopes:
+      - profile
+      - roles
+      - basic
+      - email
+      - groups
+    protocolMappers:
+      - name: groups
+        protocol: openid-connect
+        protocolMapper: oidc-group-membership-mapper
+        config:
+          full.path: "false"
+          id.token.claim: "true"
+          access.token.claim: "true"
+          claim.name: groups
+          userinfo.token.claim: "true"
+      - name: client-roles-claim
+        protocol: openid-connect
+        protocolMapper: oidc-usermodel-client-role-mapper
+        config:
+          access.token.claim: "true"
+          userinfo.token.claim: "true"
+          id.token.claim: "true"
+          claim.name: roles
+          jsonType.label: String
+          multivalued: "true"
+          usermodel.clientRoleMapping.clientId: jupyterhub
+          usermodel.clientRoleMapping.rolePrefix: ""
 roles:
   client:
     stac:
@@ -183,6 +223,25 @@ roles:
       - name: Reader
         description: Read-only access to Airflow
       - name: Launcher
+    jupyterhub:
+      - name: Admin
+        description: Can use the JupyterHub Admin Panel
+      - name: CPU:XS
+        description: Access to extra small instances (~1.9GB RAM)
+      - name: CPU:S
+        description: Access to small instances (~3.7GB RAM)
+      - name: CPU:M
+        description: Access to medium instances (~7.4GB RAM)
+      - name: CPU:L
+        description: Access to large instances (~14.8GB RAM)
+      - name: CPU:XL
+        description: Access to extra large instances (~29.7GB RAM)
+      - name: CPU:XXL
+        description: Access to extra extra large instances (~60.6GB RAM)
+      - name: CPU:XXXL
+        description: Access to extra extra extra large instances (~121GB RAM)
+      - name: GPU:T4
+        description: Access to T4 GPU instances (1 T4 GPU)
 
 
 clientScopeMappings:
@@ -267,6 +326,23 @@ clientScopes:
   - name: dataset:update
     description: Update existing datasets
     protocol: openid-connect
+  - name: groups
+    description: Group membership information
+    protocol: openid-connect
+    attributes:
+      include.in.token.scope: "true"
+      display.on.consent.screen: "true"
+    protocolMappers:
+      - name: groups
+        protocol: openid-connect
+        protocolMapper: oidc-group-membership-mapper
+        consentRequired: false
+        config:
+          full.path: "false"
+          id.token.claim: "true"
+          access.token.claim: "true"
+          claim.name: groups
+          userinfo.token.claim: "true"
 
 groups:
   - name: System Administrators
@@ -308,6 +384,31 @@ groups:
     clientRoles:
       veda-airflow:
         - Launcher
+  
+  - name: JupyterHub Admin
+    clientRoles:
+      jupyterhub:
+        - Admin
+  - name: JupyterHub User
+    clientRoles:
+      jupyterhub:
+        - CPU:XS
+        - CPU:S
+        - CPU:M
+        - CPU:L
+        - CPU:XL
+        - CPU:XXL
+        - CPU:XXXL
+  - name: JupyterHub Basic User
+    clientRoles:
+      jupyterhub:
+        - CPU:XS
+        - CPU:S
+        - CPU:M
+  - name: JupyterHub GPU User
+    clientRoles:
+      jupyterhub:
+        - GPU:T4
 
 identityProviders:
   # GitHub
@@ -364,6 +465,12 @@ identityProviderMappers:
     config:
       syncMode: "FORCE"
       role: "account.manage-account"
+  - name: "jupyterhub-default-user-group"
+    identityProviderAlias: github
+    identityProviderMapper: oidc-advanced-group-idp-mapper
+    config:
+      syncMode: "FORCE"
+      group: $(env:JUPYTERHUB_DEFAULT_GROUP:-JupyterHub Basic User)
 
 # Login Flow Configuration
 browserFlow: Browser without Password
