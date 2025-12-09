@@ -22,6 +22,9 @@ identityProviders:
     linkOnly: false
     firstBrokerLoginFlowAlias: first broker login
     config:
+      # Service Provider Entity ID (how Keycloak identifies itself to the IDP)
+      entityId: $(env:VEDA_SAML_SP_ENTITY_ID)
+      # Identity Provider Entity ID (the IDP's entity ID)
       idpEntityId: $(env:VEDA_SAML_IDP_ENTITY_ID)
       singleSignOnServiceUrl: $(env:VEDA_SAML_SSO_URL)
       singleLogoutServiceUrl: $(env:VEDA_SAML_SLO_URL:-"")

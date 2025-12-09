@@ -113,8 +113,10 @@ class KeycloakConfig(Construct):
                 )
                 # Map secret fields to environment variables
                 # Expected secret structure: idpEntityId, ssoUrl, sloUrl, signingCertificate, displayName
+                # Optional: spEntityId (defaults are set in YAML configs)
                 secret_field_mappings = {
                     "SAML": {
+                        "spEntityId": "SAML_SP_ENTITY_ID",
                         "idpEntityId": "SAML_IDP_ENTITY_ID",
                         "ssoUrl": "SAML_SSO_URL",
                         "sloUrl": "SAML_SLO_URL",
@@ -122,6 +124,7 @@ class KeycloakConfig(Construct):
                         "displayName": "SAML_IDP_DISPLAY_NAME",
                     },
                     "VEDA_SAML": {
+                        "spEntityId": "VEDA_SAML_SP_ENTITY_ID",
                         "idpEntityId": "VEDA_SAML_IDP_ENTITY_ID",
                         "ssoUrl": "VEDA_SAML_SSO_URL",
                         "sloUrl": "VEDA_SAML_SLO_URL",
