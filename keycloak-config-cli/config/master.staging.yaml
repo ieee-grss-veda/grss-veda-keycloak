@@ -145,6 +145,9 @@ authenticationFlows:
         autheticatorFlow: false
         userSetupAllowed: false
 
+# Empty authenticatorConfig to ensure no auto-redirect is configured
+authenticatorConfig: []
+
 # Local admin user for password login
 users:
   - username: $(env:MASTER_ADMIN_USERNAME:-admin)

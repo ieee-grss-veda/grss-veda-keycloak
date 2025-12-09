@@ -10,10 +10,11 @@ browserFlow: Browser with SAML and Password
 
 identityProviders:
   # SAML IDP for production
+  # TEMPORARILY DISABLED for debugging - set enabled: true when SAML config is verified
   - alias: saml-sso
     displayName: $(env:SAML_IDP_DISPLAY_NAME:-Enterprise SSO)
     providerId: saml
-    enabled: true
+    enabled: false
     updateProfileFirstLoginMode: on
     trustEmail: true
     storeToken: false
@@ -145,6 +146,9 @@ authenticationFlows:
         priority: 20
         autheticatorFlow: false
         userSetupAllowed: false
+
+# Empty authenticatorConfig to ensure no auto-redirect is configured
+authenticatorConfig: []
 
 # Local admin user for password login
 users:
