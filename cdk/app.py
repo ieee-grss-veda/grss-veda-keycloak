@@ -52,7 +52,7 @@ if saml_secrets:
         ", ".join(saml_secrets.keys()),
     )
 else:
-    logging.info("No SAML secrets found in environment (expected for dev stage).")
+    logging.info("No SAML secrets found in environment (expected for dev env).")
 
 app = App()
 
