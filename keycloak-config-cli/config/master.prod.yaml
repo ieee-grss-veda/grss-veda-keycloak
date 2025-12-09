@@ -28,9 +28,12 @@ identityProviders:
       signingCertificate: $(env:SAML_SIGNING_CERTIFICATE)
       nameIDPolicyFormat: $(env:SAML_NAMEID_FORMAT:-urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress)
       principalType: SUBJECT
+      # Sign outgoing AuthnRequests (required by most IDPs)
+      authnRequestsSigned: "true"
       postBindingAuthnRequest: "true"
       postBindingResponse: "true"
       postBindingLogout: "true"
+      # Validate incoming assertions
       wantAssertionsSigned: "true"
       wantAssertionsEncrypted: "false"
       validateSignature: "true"
