@@ -22,7 +22,7 @@ identityProviders:
     linkOnly: false
     firstBrokerLoginFlowAlias: first broker login
     config:
-      entityId: $(env:VEDA_SAML_ENTITY_ID)
+      idpEntityId: $(env:VEDA_SAML_IDP_ENTITY_ID)
       singleSignOnServiceUrl: $(env:VEDA_SAML_SSO_URL)
       singleLogoutServiceUrl: $(env:VEDA_SAML_SLO_URL:-"")
       signingCertificate: $(env:VEDA_SAML_SIGNING_CERTIFICATE)
@@ -98,6 +98,7 @@ identityProviderMappers:
       group: $(env:JUPYTERHUB_DEFAULT_GROUP:-JupyterHub Basic User)
 
 # Auth flow that redirects to SAML
+# For veda realm, we auto-redirect to SAML (no password login option)
 authenticationFlows:
   - alias: Browser with SAML
     description: Browser authentication redirecting to SAML SSO
@@ -111,15 +112,9 @@ authenticationFlows:
         priority: 10
         autheticatorFlow: false
         userSetupAllowed: false
-      - authenticator: auth-spnego
-        authenticatorFlow: false
-        requirement: DISABLED
-        priority: 20
-        autheticatorFlow: false
-        userSetupAllowed: false
       - authenticatorFlow: true
         requirement: ALTERNATIVE
-        priority: 30
+        priority: 20
         autheticatorFlow: true
         flowAlias: SAML Redirect Forms
         userSetupAllowed: false
@@ -134,32 +129,7 @@ authenticationFlows:
         authenticator: identity-provider-redirector
         authenticatorFlow: false
         requirement: REQUIRED
-        priority: 20
-        autheticatorFlow: false
-        userSetupAllowed: false
-      - authenticatorFlow: true
-        requirement: CONDITIONAL
-        priority: 30
-        autheticatorFlow: true
-        flowAlias: SAML Conditional OTP
-        userSetupAllowed: false
-
-  - alias: SAML Conditional OTP
-    description: Flow to determine if the OTP is required for the authentication
-    providerId: basic-flow
-    topLevel: false
-    builtIn: false
-    authenticationExecutions:
-      - authenticator: conditional-user-configured
-        authenticatorFlow: false
-        requirement: REQUIRED
         priority: 10
-        autheticatorFlow: false
-        userSetupAllowed: false
-      - authenticator: auth-otp-form
-        authenticatorFlow: false
-        requirement: REQUIRED
-        priority: 20
         autheticatorFlow: false
         userSetupAllowed: false
 
