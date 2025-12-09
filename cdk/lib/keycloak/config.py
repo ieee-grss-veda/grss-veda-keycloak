@@ -1,5 +1,6 @@
 import json
 import textwrap
+from pathlib import Path
 
 from aws_cdk import (
     Duration,
@@ -89,16 +90,19 @@ class KeycloakConfig(Construct):
                     secret, key
                 )
 
-        # Determine IMPORT_FILES_LOCATIONS based on stage
-        # For dev: only base config files
-        # For staging/prod: base files + environment-specific overrides
-        if stage == "dev":
-            import_files_locations = "/config/master.yaml,/config/veda.yaml"
-        else:
-            import_files_locations = (
-                f"/config/master.yaml,/config/master.{stage}.yaml,"
-                f"/config/veda.yaml,/config/veda.{stage}.yaml"
-            )
+        # Determine IMPORT_FILES_LOCATIONS based on available config files
+        # Base files are always included, environment-specific files are added if they exist
+        config_dir = Path(app_dir) / "config"
+
+        import_files = ["/config/master.yaml"]
+        if (config_dir / f"master.{stage}.yaml").exists():
+            import_files.append(f"/config/master.{stage}.yaml")
+
+        import_files.append("/config/veda.yaml")
+        if (config_dir / f"veda.{stage}.yaml").exists():
+            import_files.append(f"/config/veda.{stage}.yaml")
+
+        import_files_locations = ",".join(import_files)
 
         # Import SAML secrets if provided (for staging/prod)
         saml_task_secrets = {}
