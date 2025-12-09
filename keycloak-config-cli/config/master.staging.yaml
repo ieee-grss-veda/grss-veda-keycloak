@@ -73,6 +73,7 @@ identityProviderMappers:
       role: admin
 
 # Auth flow with SAML + Password options
+# Structure: cookie check -> forms subflow (username/password form with IDP button)
 authenticationFlows:
   - alias: Browser with SAML and Password
     description: Browser authentication with SAML SSO and password option
@@ -86,15 +87,9 @@ authenticationFlows:
         priority: 10
         autheticatorFlow: false
         userSetupAllowed: false
-      - authenticator: auth-spnego
-        authenticatorFlow: false
-        requirement: DISABLED
-        priority: 20
-        autheticatorFlow: false
-        userSetupAllowed: false
       - authenticatorFlow: true
         requirement: ALTERNATIVE
-        priority: 30
+        priority: 20
         autheticatorFlow: true
         flowAlias: SAML and Password Forms
         userSetupAllowed: false
@@ -105,48 +100,13 @@ authenticationFlows:
     topLevel: false
     builtIn: false
     authenticationExecutions:
+      # Username/password form - shows login form with IDP buttons
       - authenticator: auth-username-password-form
         authenticatorFlow: false
-        requirement: ALTERNATIVE
-        priority: 10
-        autheticatorFlow: false
-        userSetupAllowed: false
-      # Identity provider redirector WITHOUT defaultProvider config
-      # This shows login page with both password form and SAML button
-      - authenticator: identity-provider-redirector
-        authenticatorFlow: false
-        requirement: ALTERNATIVE
-        priority: 20
-        autheticatorFlow: false
-        userSetupAllowed: false
-      - authenticatorFlow: true
-        requirement: CONDITIONAL
-        priority: 30
-        autheticatorFlow: true
-        flowAlias: SAML and Password Conditional OTP
-        userSetupAllowed: false
-
-  - alias: SAML and Password Conditional OTP
-    description: Flow to determine if the OTP is required for the authentication
-    providerId: basic-flow
-    topLevel: false
-    builtIn: false
-    authenticationExecutions:
-      - authenticator: conditional-user-configured
-        authenticatorFlow: false
         requirement: REQUIRED
         priority: 10
         autheticatorFlow: false
         userSetupAllowed: false
-      - authenticator: auth-otp-form
-        authenticatorFlow: false
-        requirement: REQUIRED
-        priority: 20
-        autheticatorFlow: false
-        userSetupAllowed: false
-
-# Empty authenticatorConfig to ensure no auto-redirect is configured
-authenticatorConfig: []
 
 # Local admin user for password login
 users:
