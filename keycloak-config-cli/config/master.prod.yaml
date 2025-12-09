@@ -112,8 +112,9 @@ authenticationFlows:
         priority: 10
         autheticatorFlow: false
         userSetupAllowed: false
-      - authenticatorConfig: saml-sso-redirector
-        authenticator: identity-provider-redirector
+      # Identity provider redirector WITHOUT defaultProvider config
+      # This shows login page with both password form and SAML button
+      - authenticator: identity-provider-redirector
         authenticatorFlow: false
         requirement: ALTERNATIVE
         priority: 20
@@ -144,11 +145,6 @@ authenticationFlows:
         priority: 20
         autheticatorFlow: false
         userSetupAllowed: false
-
-authenticatorConfig:
-  - alias: saml-sso-redirector
-    config:
-      defaultProvider: saml-sso
 
 # Local admin user for password login
 users:
