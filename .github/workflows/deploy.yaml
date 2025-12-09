@@ -53,7 +53,7 @@ jobs:
       - name: Install dependencies
         run: uv sync -p 3.13
 
-      - name: Deploy CDK to dev environment
+      - name: Deploy CDK to ${{ inputs.environment }} environment
         run: |
           uv run npx cdk deploy --require-approval never --outputs-file outputs.json
         env:
@@ -67,9 +67,12 @@ jobs:
           KEYCLOAK_CONFIG_CLI_VERSION: ${{ vars.KEYCLOAK_CONFIG_CLI_VERSION }}
           SSL_CERTIFICATE_ARN: ${{ vars.SSL_CERTIFICATE_ARN }}
           STAGE: ${{ inputs.environment }}
-          # Imported Identity Provider secrets
+          # Imported Identity Provider secrets (GitHub OAuth - for dev)
           IDP_SECRET_ARN_GH: ${{ vars.IDP_SECRET_ARN_GH }}
           IDP_SECRET_ARN_VEDA_GH: ${{ vars.IDP_SECRET_ARN_VEDA_GH }}
+          # SAML Identity Provider secrets (for staging/prod)
+          SAML_SECRET_ARN: ${{ vars.SAML_SECRET_ARN }}
+          VEDA_SAML_SECRET_ARN: ${{ vars.VEDA_SAML_SECRET_ARN }}
           RDS_SNAPSHOT_IDENTIFIER: ${{ vars.RDS_SNAPSHOT_IDENTIFIER }}
           CONFIGURE_ROUTE53: ${{ vars.CONFIGURE_ROUTE53 }}
           HOSTED_ZONE_DOMAIN: ${{ vars.HOSTED_ZONE_DOMAIN }}
