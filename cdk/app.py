@@ -9,7 +9,7 @@ from aws_cdk import (
 )
 
 from lib.keycloak import KeycloakStack
-from lib.utils import get_oauth_secrets, get_private_client_ids
+from lib.utils import get_oauth_secrets, get_private_client_ids, get_saml_secrets
 from lib.settings import Settings
 
 logging.basicConfig(
@@ -44,6 +44,16 @@ else:
         settings.keycloak_config_cli_config_dir,
     )
 
+logging.info("Extracting SAML secret ARNs from environment...")
+saml_secrets = get_saml_secrets()
+if saml_secrets:
+    logging.info(
+        "Found SAML secrets in environment: %s",
+        ", ".join(saml_secrets.keys()),
+    )
+else:
+    logging.info("No SAML secrets found in environment (expected for dev stage).")
+
 app = App()
 
 # Optionally set a custom synthesizer if CDK_BOOTSTRAP_QUALIFIER is present
@@ -76,6 +86,8 @@ KeycloakStack(
     hosted_zone_domain=settings.hosted_zone_domain,
     is_production=settings.is_production,
     rds_snapshot_identifier=settings.rds_snapshot_identifier,
+    stage=settings.stage,
+    saml_secrets=saml_secrets if saml_secrets else None,
     # Stack Configuration
     env={
         "account": settings.aws_account_id,

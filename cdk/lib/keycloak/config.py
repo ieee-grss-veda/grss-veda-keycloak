@@ -33,6 +33,8 @@ class KeycloakConfig(Construct):
         idp_oauth_client_secrets: dict[str, str],
         private_oauth_clients: list[dict[str, str]],
         version: str,
+        stage: str = "dev",
+        saml_secrets: dict[str, str] | None = None,
         **kwargs,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
@@ -87,6 +89,48 @@ class KeycloakConfig(Construct):
                     secret, key
                 )
 
+        # Determine IMPORT_FILES_LOCATIONS based on stage
+        # For dev: only base config files
+        # For staging/prod: base files + environment-specific overrides
+        if stage == "dev":
+            import_files_locations = "/config/master.yaml,/config/veda.yaml"
+        else:
+            import_files_locations = (
+                f"/config/master.yaml,/config/master.{stage}.yaml,"
+                f"/config/veda.yaml,/config/veda.{stage}.yaml"
+            )
+
+        # Import SAML secrets if provided (for staging/prod)
+        saml_task_secrets = {}
+        if saml_secrets:
+            for secret_key, secret_arn in saml_secrets.items():
+                imported_secret = secretsmanager.Secret.from_secret_partial_arn(
+                    self, f"saml-{secret_key}", secret_arn
+                )
+                # Map secret fields to environment variables
+                # Expected secret structure: entityId, ssoUrl, sloUrl, signingCertificate, displayName
+                secret_field_mappings = {
+                    "SAML": {
+                        "entityId": "SAML_ENTITY_ID",
+                        "ssoUrl": "SAML_SSO_URL",
+                        "sloUrl": "SAML_SLO_URL",
+                        "signingCertificate": "SAML_SIGNING_CERTIFICATE",
+                        "displayName": "SAML_IDP_DISPLAY_NAME",
+                    },
+                    "VEDA_SAML": {
+                        "entityId": "VEDA_SAML_ENTITY_ID",
+                        "ssoUrl": "VEDA_SAML_SSO_URL",
+                        "sloUrl": "VEDA_SAML_SLO_URL",
+                        "signingCertificate": "VEDA_SAML_SIGNING_CERTIFICATE",
+                        "displayName": "VEDA_SAML_IDP_DISPLAY_NAME",
+                    },
+                }
+                if secret_key in secret_field_mappings:
+                    for field, env_var in secret_field_mappings[secret_key].items():
+                        saml_task_secrets[env_var] = ecs.Secret.from_secrets_manager(
+                            imported_secret, field
+                        )
+
         config_task_def = ecs.FargateTaskDefinition(
             self, "ConfigTaskDef", cpu=256, memory_limit_mib=512
         )
@@ -104,7 +148,7 @@ class KeycloakConfig(Construct):
                 "KEYCLOAK_URL": public_url,
                 "KEYCLOAK_AVAILABILITYCHECK_ENABLED": "true",
                 "KEYCLOAK_AVAILABILITYCHECK_TIMEOUT": "120s",
-                "IMPORT_FILES_LOCATIONS": "/config/*",
+                "IMPORT_FILES_LOCATIONS": import_files_locations,
                 "IMPORT_CACHE_ENABLED": "false",
                 "IMPORT_VARSUBSTITUTION_ENABLED": "true",
             },
@@ -117,6 +161,7 @@ class KeycloakConfig(Construct):
                     admin_secret, "password"
                 ),
                 **task_client_secrets,  # Merge the generated client secrets
+                **saml_task_secrets,  # Merge SAML secrets for staging/prod
             },
         )
 
@@ -131,6 +176,19 @@ class KeycloakConfig(Construct):
                         "secretsmanager:DescribeSecret",
                     ],
                     resources=idp_secret_arns,
+                )
+            )
+
+        # Grant GetSecretValue permission for SAML secrets (staging/prod)
+        if saml_secrets:
+            config_task_def.execution_role.add_to_policy(
+                iam.PolicyStatement(
+                    effect=iam.Effect.ALLOW,
+                    actions=[
+                        "secretsmanager:GetSecretValue",
+                        "secretsmanager:DescribeSecret",
+                    ],
+                    resources=list(saml_secrets.values()),
                 )
             )
 
