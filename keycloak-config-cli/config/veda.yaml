@@ -24,11 +24,11 @@ clients:
 
   - clientId: stac
     name: STAC Catalog
-    rootUrl: $(env:STAC_CLIENT_URL)
+    rootUrl: $(env:STAC_CLIENT_URL)/stac
     publicClient: true
     attributes: {}
     redirectUris:
-      - $(env:STAC_CLIENT_URL)/*
+      - $(env:STAC_CLIENT_URL)/stac/*
     webOrigins:
       - $(env:STAC_CLIENT_URL)
     protocol: openid-connect
@@ -70,15 +70,15 @@ clients:
 
   - clientId: ingest-api
     name: STAC Ingest API
-    rootUrl: $(env:INGEST_API_CLIENT_URL)
+    rootUrl: $(env:INGEST_API_CLIENT_URL)/ingest
     publicClient: true
     attributes: {
       "access.token.lifespan": "3600",
     }
     redirectUris:
-      - $(env:INGEST_API_CLIENT_URL)/*
+      - $(env:INGEST_API_CLIENT_URL)/ingest/*
     webOrigins:
-      - $(env:INGEST_API_WEB_ORIGIN)
+      - $(env:INGEST_API_CLIENT_URL)
     protocol: openid-connect
     fullScopeAllowed: true
     defaultClientScopes:
