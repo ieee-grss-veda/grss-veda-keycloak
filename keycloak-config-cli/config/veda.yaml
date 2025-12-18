@@ -37,7 +37,7 @@ clients:
     attributes:
       post.logout.redirect.uris: "+"
     redirectUris:
-      - $(env:STAC_CLIENT_URL)/*
+      - $(env:STAC_CLIENT_URL)/stac/*
     webOrigins:
       - "+"
     protocol: openid-connect
@@ -87,7 +87,7 @@ clients:
       "access.token.lifespan": "3600"
       post.logout.redirect.uris: "+"
     redirectUris:
-      - $(env:INGEST_API_CLIENT_URL)/*
+      - $(env:INGEST_API_CLIENT_URL)/ingest/*
     webOrigins:
       - "+"
     protocol: openid-connect
