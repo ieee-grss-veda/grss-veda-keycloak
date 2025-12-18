@@ -32,7 +32,7 @@ clients:
     redirectUris:
       - $(env:STAC_CLIENT_URL)/*
     webOrigins:
-      - $(env:STAC_CLIENT_URL)
+      - "+"
     protocol: openid-connect
     fullScopeAllowed: true
     defaultClientScopes:
@@ -80,7 +80,7 @@ clients:
     redirectUris:
       - $(env:INGEST_API_CLIENT_URL)/*
     webOrigins:
-      - $(env:INGEST_API_WEB_ORIGIN)
+      - "+"
     protocol: openid-connect
     fullScopeAllowed: true
     defaultClientScopes:
