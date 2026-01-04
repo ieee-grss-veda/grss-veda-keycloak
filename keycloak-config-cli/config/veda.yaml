@@ -210,7 +210,7 @@ clients:
     publicClient: false
     attributes: {}
     redirectUris:
-      - $(env:JUPYTERHUB_CLIENT_URL)/*
+      - $(env:MONITORING_CLIENT_URL)/*
     webOrigins:
       - "+"
     protocol: openid-connect
