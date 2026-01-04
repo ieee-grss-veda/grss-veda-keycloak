@@ -1,0 +1,21 @@
+---
+# Staging environment overrides for master realm
+# Password-only authentication (no SAML)
+enabled: true
+realm: master
+
+# Use default browser flow (username/password only)
+browserFlow: browser
+
+# Local admin user for password login
+users:
+  - username: $(env:MASTER_ADMIN_USERNAME:-admin)
+    email: $(env:MASTER_ADMIN_EMAIL)
+    emailVerified: true
+    enabled: true
+    credentials:
+      - type: password
+        value: $(env:MASTER_ADMIN_PASSWORD)
+        temporary: false
+    realmRoles:
+      - admin

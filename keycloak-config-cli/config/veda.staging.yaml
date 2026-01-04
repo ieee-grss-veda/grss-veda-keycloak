@@ -1,0 +1,144 @@
+---
+# Staging environment overrides for veda realm
+# This file is applied AFTER veda.yaml to add SAML IDP
+enabled: true
+realm: veda
+
+# Override browser flow to use SAML
+browserFlow: Browser with SAML
+
+identityProviders:
+  # SAML IDP for staging
+  - alias: saml-sso
+    displayName: $(env:VEDA_SAML_IDP_DISPLAY_NAME:-Enterprise SSO)
+    providerId: saml
+    enabled: true
+    updateProfileFirstLoginMode: on
+    trustEmail: true
+    storeToken: false
+    addReadTokenRoleOnCreate: false
+    authenticateByDefault: false
+    linkOnly: false
+    firstBrokerLoginFlowAlias: first broker login
+    config:
+      # Service Provider Entity ID (how Keycloak identifies itself to the IDP)
+      entityId: $(env:VEDA_SAML_SP_ENTITY_ID)
+      # Identity Provider Entity ID (the IDP's entity ID)
+      idpEntityId: $(env:VEDA_SAML_IDP_ENTITY_ID)
+      singleSignOnServiceUrl: $(env:VEDA_SAML_SSO_URL)
+      singleLogoutServiceUrl: $(env:VEDA_SAML_SLO_URL:-"")
+      signingCertificate: $(env:VEDA_SAML_SIGNING_CERTIFICATE)
+      nameIDPolicyFormat: $(env:SAML_NAMEID_FORMAT:-urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress)
+      principalType: SUBJECT
+      # Sign outgoing AuthnRequests (required by most IDPs)
+      authnRequestsSigned: "true"
+      postBindingAuthnRequest: "true"
+      postBindingResponse: "true"
+      postBindingLogout: "true"
+      # Validate incoming assertions
+      wantAssertionsSigned: "true"
+      wantAssertionsEncrypted: "false"
+      validateSignature: "true"
+      signatureAlgorithm: RSA_SHA256
+      syncMode: FORCE
+
+identityProviderMappers:
+  # Map SAML email attribute to Keycloak user
+  - name: saml-email-mapper
+    identityProviderAlias: saml-sso
+    identityProviderMapper: saml-user-attribute-idp-mapper
+    config:
+      syncMode: FORCE
+      user.attribute: email
+      attribute.name: $(env:SAML_EMAIL_ATTRIBUTE:-email)
+
+  # Map SAML first name attribute
+  - name: saml-firstname-mapper
+    identityProviderAlias: saml-sso
+    identityProviderMapper: saml-user-attribute-idp-mapper
+    config:
+      syncMode: FORCE
+      user.attribute: firstName
+      attribute.name: $(env:SAML_FIRSTNAME_ATTRIBUTE:-firstName)
+
+  # Map SAML last name attribute
+  - name: saml-lastname-mapper
+    identityProviderAlias: saml-sso
+    identityProviderMapper: saml-user-attribute-idp-mapper
+    config:
+      syncMode: FORCE
+      user.attribute: lastName
+      attribute.name: $(env:SAML_LASTNAME_ATTRIBUTE:-lastName)
+
+  # Map SAML username attribute
+  - name: saml-username-mapper
+    identityProviderAlias: saml-sso
+    identityProviderMapper: saml-user-attribute-idp-mapper
+    config:
+      syncMode: FORCE
+      user.attribute: username
+      attribute.name: $(env:SAML_USERNAME_ATTRIBUTE:-username)
+
+  # Assign default account roles
+  - name: account-view-profile
+    identityProviderAlias: saml-sso
+    identityProviderMapper: oidc-hardcoded-role-idp-mapper
+    config:
+      syncMode: FORCE
+      role: account.view-profile
+
+  - name: account-manage-account
+    identityProviderAlias: saml-sso
+    identityProviderMapper: oidc-hardcoded-role-idp-mapper
+    config:
+      syncMode: FORCE
+      role: account.manage-account
+
+  # Assign default JupyterHub group
+  - name: jupyterhub-default-user-group
+    identityProviderAlias: saml-sso
+    identityProviderMapper: oidc-advanced-group-idp-mapper
+    config:
+      syncMode: FORCE
+      group: $(env:JUPYTERHUB_DEFAULT_GROUP:-JupyterHub Basic User)
+
+# Auth flow that redirects to SAML
+# For veda realm, we auto-redirect to SAML (no password login option)
+authenticationFlows:
+  - alias: Browser with SAML
+    description: Browser authentication redirecting to SAML SSO
+    providerId: basic-flow
+    topLevel: true
+    builtIn: false
+    authenticationExecutions:
+      - authenticator: auth-cookie
+        authenticatorFlow: false
+        requirement: ALTERNATIVE
+        priority: 10
+        autheticatorFlow: false
+        userSetupAllowed: false
+      - authenticatorFlow: true
+        requirement: ALTERNATIVE
+        priority: 20
+        autheticatorFlow: true
+        flowAlias: SAML Redirect Forms
+        userSetupAllowed: false
+
+  - alias: SAML Redirect Forms
+    description: Redirects to SAML identity provider
+    providerId: basic-flow
+    topLevel: false
+    builtIn: false
+    authenticationExecutions:
+      - authenticatorConfig: saml-sso-redirector
+        authenticator: identity-provider-redirector
+        authenticatorFlow: false
+        requirement: REQUIRED
+        priority: 10
+        autheticatorFlow: false
+        userSetupAllowed: false
+
+authenticatorConfig:
+  - alias: saml-sso-redirector
+    config:
+      defaultProvider: saml-sso

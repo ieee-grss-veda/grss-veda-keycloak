@@ -77,3 +77,28 @@ def client_id_to_env_var(client_id: str) -> str:
     hyphens with underscores and converting to uppercase.
     """
     return client_id.replace("-", "_").upper()
+
+
+def get_saml_secrets() -> dict[str, str]:
+    """
+    Extracts SAML secret ARNs from environment variables.
+
+    Expected environment variables:
+    - SAML_SECRET_ARN: ARN for master realm SAML IDP secret
+    - VEDA_SAML_SECRET_ARN: ARN for veda realm SAML IDP secret
+
+    Returns a dictionary mapping secret key to its ARN:
+    - "SAML": master realm SAML secret ARN
+    - "VEDA_SAML": veda realm SAML secret ARN
+    """
+    saml_secrets = {}
+
+    # Master realm SAML secret
+    if master_saml_arn := os.environ.get("SAML_SECRET_ARN"):
+        saml_secrets["SAML"] = master_saml_arn
+
+    # Veda realm SAML secret
+    if veda_saml_arn := os.environ.get("VEDA_SAML_SECRET_ARN"):
+        saml_secrets["VEDA_SAML"] = veda_saml_arn
+
+    return saml_secrets
