@@ -15,17 +15,5 @@ identityProviderMappers: []
 authenticationFlows: []
 authenticatorConfig: []
 
-# Local admin user for password login
-users:
-  - username: $(env:MASTER_ADMIN_USERNAME:-admin)
-    firstName: Admin
-    lastName: User
-    email: $(env:MASTER_ADMIN_EMAIL)
-    emailVerified: true
-    enabled: true
-    credentials:
-      - type: password
-        value: $(env:MASTER_ADMIN_PASSWORD)
-        temporary: false
-    realmRoles:
-      - admin
+# Note: Admin user is managed by Keycloak bootstrap process via Secrets Manager
+# Do not define users here to avoid conflicts with existing bootstrap admin
