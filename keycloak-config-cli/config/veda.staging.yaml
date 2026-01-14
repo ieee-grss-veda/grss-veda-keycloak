@@ -70,14 +70,14 @@ identityProviderMappers:
       user.attribute: lastName
       attribute.name: $(env:SAML_LASTNAME_ATTRIBUTE:-lastName)
 
-  # Map SAML username attribute
+  # Map SAML username attribute (IMPORT mode - only set on first login, preserve on subsequent logins)
   - name: saml-username-mapper
     identityProviderAlias: saml-sso
     identityProviderMapper: saml-user-attribute-idp-mapper
     config:
-      syncMode: FORCE
+      syncMode: IMPORT
       user.attribute: username
-      attribute.name: $(env:SAML_USERNAME_ATTRIBUTE:-username)
+      attribute.name: $(env:SAML_EMAIL_ATTRIBUTE:-email)
 
   # Assign default account roles
   - name: account-view-profile
