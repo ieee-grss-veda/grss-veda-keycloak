@@ -7,15 +7,13 @@ realm: master
 # Use default browser flow (username/password only)
 browserFlow: browser
 
-# Local admin user for password login
-users:
-  - username: $(env:MASTER_ADMIN_USERNAME:-admin)
-    email: $(env:MASTER_ADMIN_EMAIL)
-    emailVerified: true
-    enabled: true
-    credentials:
-      - type: password
-        value: $(env:MASTER_ADMIN_PASSWORD)
-        temporary: false
-    realmRoles:
-      - admin
+# Explicitly remove any identity providers (e.g., GitHub from dev)
+identityProviders: []
+identityProviderMappers: []
+
+# Remove custom auth flows (keeps only built-in flows)
+authenticationFlows: []
+authenticatorConfig: []
+
+# Note: Admin user is managed by Keycloak bootstrap process via Secrets Manager
+# Do not define users here to avoid conflicts with existing bootstrap admin
