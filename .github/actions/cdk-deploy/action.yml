@@ -1,0 +1,83 @@
+name: Deploy Keycloak CDK Stack
+description: Deploy Keycloak infrastructure using AWS CDK and apply configuration
+
+inputs:
+  dir:
+    description: "Working directory for the deployment"
+    required: false
+    default: "."
+  env_aws_secret_name:
+    description: "AWS Secrets Manager secret ID for deployment configuration"
+    required: true
+  script_path:
+    description: "Path to generate_env_file.py script"
+    required: false
+  skip_apply_config:
+    description: "Skip the post-deployment config application step"
+    required: false
+    default: "false"
+  config_vars_json:
+    description: "JSON object of variables to pass to keycloak-config-cli (e.g., client URLs)"
+    required: false
+    default: "{}"
+
+outputs:
+  stack_name:
+    description: "Name of the deployed CloudFormation stack"
+    value: ${{ steps.get-outputs.outputs.stack_name }}
+  config_lambda_arn:
+    description: "ARN of the Config Lambda function"
+    value: ${{ steps.get-outputs.outputs.config_lambda_arn }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python 3.13
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.13"
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+
+    - name: Install project dependencies
+      shell: bash
+      working-directory: ${{ inputs.dir }}
+      run: uv sync -p 3.13
+
+    - name: Install boto3 for env file generation
+      if: ${{ inputs.script_path != '' }}
+      shell: bash
+      run: pip install boto3
+
+    - name: Get secrets from AWS Secrets Manager
+      if: ${{ inputs.script_path != '' }}
+      shell: bash
+      working-directory: ${{ inputs.dir }}
+      run: |
+        python ${{ inputs.script_path }} \
+          --secret-id ${{ inputs.env_aws_secret_name }} \
+          --env-file .env
+
+    - name: Deploy CDK Stack
+      shell: bash
+      working-directory: ${{ inputs.dir }}
+      run: |
+        uv run npx cdk deploy --require-approval never --outputs-file ${HOME}/cdk-outputs.json
+
+    - name: Get CDK Outputs
+      id: get-outputs
+      shell: bash
+      run: |
+        stack_name=$(jq -r 'keys_unsorted[0]' ${HOME}/cdk-outputs.json)
+        echo "stack_name=$stack_name" >> $GITHUB_OUTPUT
+
+        config_lambda_arn=$(jq -r ".[\"$stack_name\"].ConfigLambdaArn // empty" ${HOME}/cdk-outputs.json)
+        echo "config_lambda_arn=$config_lambda_arn" >> $GITHUB_OUTPUT
+
+    - name: Apply Keycloak Configuration
+      if: ${{ inputs.skip_apply_config != 'true' && steps.get-outputs.outputs.config_lambda_arn != '' }}
+      shell: bash
+      working-directory: ${{ inputs.dir }}
+      run: |
+        uv run bin/apply-config.py "${{ steps.get-outputs.outputs.config_lambda_arn }}" '${{ inputs.config_vars_json }}'
