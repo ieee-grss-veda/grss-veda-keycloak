@@ -13,6 +13,7 @@ clients:
     publicClient: true
     protocol: openid-connect
     standardFlowEnabled: true
+    fullScopeAllowed: true
     attributes: {}
     redirectUris:
       - $(env:ACCOUNT_CONSOLE_URL)/*
