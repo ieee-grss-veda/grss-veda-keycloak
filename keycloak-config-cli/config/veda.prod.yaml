@@ -5,8 +5,8 @@
 enabled: true
 realm: veda
 
-# Override browser flow to use SAML
-browserFlow: Browser with SAML
+# Override browser flow to show login choice
+browserFlow: Browser with Choice
 
 identityProviders:
   # SAML IDP for production
@@ -108,8 +108,7 @@ identityProviderMappers:
       syncMode: FORCE
       group: $(env:JUPYTERHUB_DEFAULT_GROUP:-JupyterHub Basic User)
 
-# Auth flow that redirects to SAML
-# For veda realm, we auto-redirect to SAML (no password login option)
+# Auth flow that shows choice between SAML SSO and guest login
 authenticationFlows:
   # Post-broker login flow for email whitelist checking
   # Whitelist is managed via 'ssoEmailWhitelist' realm attribute (Admin REST API)
@@ -130,33 +129,34 @@ authenticationFlows:
     builtIn: false
     authenticationExecutions:
       - authenticator: auth-cookie
-        authenticatorFlow: false
         requirement: ALTERNATIVE
         priority: 10
-        autheticatorFlow: false
-        userSetupAllowed: false
-      - authenticatorFlow: true
+      - flowAlias: Forms
         requirement: ALTERNATIVE
         priority: 20
-        autheticatorFlow: true
-        flowAlias: SAML Redirect Forms
-        userSetupAllowed: false
 
-  - alias: SAML Redirect Forms
-    description: Redirects to SAML identity provider
+  - alias: Forms
+    description: Username/password forms
     providerId: basic-flow
     topLevel: false
     builtIn: false
     authenticationExecutions:
-      - authenticatorConfig: saml-sso-redirector
-        authenticator: identity-provider-redirector
-        authenticatorFlow: false
+      - authenticator: auth-username-password-form
         requirement: REQUIRED
         priority: 10
-        autheticatorFlow: false
-        userSetupAllowed: false
+      - flowAlias: Browser - Conditional OTP
+        requirement: CONDITIONAL
+        priority: 20
 
-authenticatorConfig:
-  - alias: saml-sso-redirector
-    config:
-      defaultProvider: saml-sso
+  - alias: Browser - Conditional OTP
+    description: Flow to determine if the OTP is required for the authentication
+    providerId: basic-flow
+    topLevel: false
+    builtIn: false
+    authenticationExecutions:
+      - authenticator: conditional-user-configured
+        requirement: REQUIRED
+        priority: 10
+      - authenticator: auth-otp-form
+        requirement: REQUIRED
+        priority: 20
