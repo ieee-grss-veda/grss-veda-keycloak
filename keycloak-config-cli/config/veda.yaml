@@ -7,6 +7,27 @@ displayName: Applications
 displayNameHtml: GRSS VEDA Ecosystem
 loginTheme: veda
 
+# Enable guest user registration
+registrationAllowed: true
+registrationEmailAsUsername: true
+registrationFlow: registration
+
+# Invitation codes for guest user registration
+attributes:
+  invitation_codes: |
+    {
+      "GUEST2024": {
+        "groupName": "Guest Users - Basic",
+        "enabled": true,
+        "description": "Basic guest access for 2024"
+      },
+      "RESEARCHER2024": {
+        "groupName": "Guest Users - Researcher",
+        "enabled": true,
+        "description": "Researcher access with JupyterHub"
+      }
+    }
+
 clients:
   - clientId: account-console
     name: Account Console
@@ -404,6 +425,42 @@ clientScopes:
           claim.name: groups
           userinfo.token.claim: "true"
 
+# Custom registration flow with invitation code validation
+authenticationFlows:
+  - alias: registration
+    description: Registration flow with invitation code validation
+    providerId: basic-flow
+    topLevel: true
+    builtIn: false
+    authenticationExecutions:
+      - authenticator: registration-page-form
+        requirement: REQUIRED
+        priority: 10
+        authenticatorFlow: true
+        flowAlias: registration form
+
+  - alias: registration form
+    description: Registration form with invitation code
+    providerId: form-flow
+    topLevel: false
+    builtIn: false
+    authenticationExecutions:
+      - authenticator: registration-user-creation
+        requirement: REQUIRED
+        priority: 20
+      - authenticator: registration-profile-action
+        requirement: REQUIRED
+        priority: 40
+      - authenticator: registration-password-action
+        requirement: REQUIRED
+        priority: 50
+      - authenticator: invitation-code-validation
+        requirement: REQUIRED
+        priority: 60
+      - authenticator: registration-recaptcha-action
+        requirement: DISABLED
+        priority: 70
+
 groups:
   - name: System Administrators
     clientRoles:
@@ -481,6 +538,27 @@ groups:
     clientRoles:
       monitoring:
         - Viewer
+
+  # Guest user groups
+  - name: Guest Users - Basic
+    clientRoles:
+      stac:
+        - Editor
+      jupyterhub:
+        - CPU:XS
+        - CPU:S
+
+  - name: Guest Users - Researcher
+    clientRoles:
+      stac:
+        - Editor
+      ingest-api:
+        - Editor
+      jupyterhub:
+        - CPU:XS
+        - CPU:S
+        - CPU:M
+        - CPU:L
 
 users:
   - username: service-account-airflow-stac-etl
