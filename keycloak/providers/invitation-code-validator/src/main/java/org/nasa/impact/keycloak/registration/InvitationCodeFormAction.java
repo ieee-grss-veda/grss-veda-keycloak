@@ -84,7 +84,7 @@ public class InvitationCodeFormAction implements FormAction {
         }
 
         // Store the group assignment for the success handler
-        context.getAuthenticationSession().setUserSessionNote(SESSION_NOTE_GROUP_NAME, codeConfig.getGroupName());
+        context.getAuthenticationSession().setAuthNote(SESSION_NOTE_GROUP_NAME, codeConfig.getGroupName());
         context.success();
     }
 
@@ -93,7 +93,7 @@ public class InvitationCodeFormAction implements FormAction {
         UserModel user = context.getUser();
 
         // Get the group name from session notes
-        String groupName = context.getAuthenticationSession().getUserSessionNote(SESSION_NOTE_GROUP_NAME);
+        String groupName = context.getAuthenticationSession().getAuthNote(SESSION_NOTE_GROUP_NAME);
 
         if (groupName != null && !groupName.isEmpty()) {
             // Find and add user to the group

@@ -10,7 +10,8 @@ loginTheme: veda
 # Enable guest user registration
 registrationAllowed: true
 registrationEmailAsUsername: true
-registrationFlow: registration
+registrationFlow: registration with invitation code
+browserFlow: browser
 
 # Invitation codes for guest user registration
 attributes:
@@ -427,7 +428,7 @@ clientScopes:
 
 # Custom registration flow with invitation code validation
 authenticationFlows:
-  - alias: registration
+  - alias: registration with invitation code
     description: Registration flow with invitation code validation
     providerId: basic-flow
     topLevel: true
@@ -437,9 +438,9 @@ authenticationFlows:
         requirement: REQUIRED
         priority: 10
         authenticatorFlow: true
-        flowAlias: registration form
+        flowAlias: invitation code registration form
 
-  - alias: registration form
+  - alias: invitation code registration form
     description: Registration form with invitation code
     providerId: form-flow
     topLevel: false
@@ -448,18 +449,58 @@ authenticationFlows:
       - authenticator: registration-user-creation
         requirement: REQUIRED
         priority: 20
-      - authenticator: registration-profile-action
-        requirement: REQUIRED
-        priority: 40
       - authenticator: registration-password-action
         requirement: REQUIRED
-        priority: 50
+        priority: 40
       - authenticator: invitation-code-validation
         requirement: REQUIRED
-        priority: 60
+        priority: 50
       - authenticator: registration-recaptcha-action
         requirement: DISABLED
-        priority: 70
+        priority: 60
+
+  # Browser flow with login choice (SSO or guest login)
+  # Defined here so all flows are in one place; env-specific files set browserFlow to activate
+  - alias: Browser with Choice
+    description: Choose between SSO or Guest login
+    providerId: basic-flow
+    topLevel: true
+    builtIn: false
+    authenticationExecutions:
+      - authenticator: auth-cookie
+        requirement: ALTERNATIVE
+        priority: 10
+      - authenticatorFlow: true
+        flowAlias: Choice Forms
+        requirement: ALTERNATIVE
+        priority: 20
+
+  - alias: Choice Forms
+    description: Username/password forms
+    providerId: basic-flow
+    topLevel: false
+    builtIn: false
+    authenticationExecutions:
+      - authenticator: auth-username-password-form
+        requirement: REQUIRED
+        priority: 10
+      - authenticatorFlow: true
+        flowAlias: Choice Conditional OTP
+        requirement: CONDITIONAL
+        priority: 20
+
+  - alias: Choice Conditional OTP
+    description: Flow to determine if the OTP is required for the authentication
+    providerId: basic-flow
+    topLevel: false
+    builtIn: false
+    authenticationExecutions:
+      - authenticator: conditional-user-configured
+        requirement: REQUIRED
+        priority: 10
+      - authenticator: auth-otp-form
+        requirement: REQUIRED
+        priority: 20
 
 groups:
   - name: System Administrators

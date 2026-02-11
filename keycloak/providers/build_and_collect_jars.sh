@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Set KEYCLOAK_VERSION to the provided environment variable or default to 'latest'
 KEYCLOAK_VERSION=${KEYCLOAK_VERSION:-latest}

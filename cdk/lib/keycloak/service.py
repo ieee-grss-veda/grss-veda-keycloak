@@ -1,6 +1,7 @@
 import re
 from constructs import Construct
 from aws_cdk import (
+    CfnOutput,
     Duration,
     aws_ec2 as ec2,
     aws_ecs as ecs,
@@ -182,3 +183,17 @@ class KeycloakService(Construct):
         )
 
         database_instance.connections.allow_default_port_from(self.alb_service.service)
+
+        CfnOutput(
+            self,
+            "ClusterName",
+            key="ClusterName",
+            value=self.alb_service.cluster.cluster_name,
+        )
+
+        CfnOutput(
+            self,
+            "ServiceName",
+            key="ServiceName",
+            value=self.alb_service.service.service_name,
+        )

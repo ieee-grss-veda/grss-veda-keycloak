@@ -68,6 +68,7 @@ identityProviderMappers:
       group: $(env:JUPYTERHUB_DEFAULT_GROUP:-JupyterHub Basic User)
 
 # Login Flow Configuration - show choice between GitHub SSO and Guest login
+# Flow definitions are in veda.yaml; this just activates the browser choice flow
 browserFlow: Browser with Choice
 authenticationFlows:
   # Post-broker login flow for email whitelist checking

@@ -83,10 +83,19 @@ jobs:
           RDS_INSTANCE_SIZE: ${{ vars.RDS_INSTANCE_SIZE }}
           ECS_HEALTH_CHECK_GRACE_PERIOD: ${{ vars.ECS_HEALTH_CHECK_GRACE_PERIOD }}
 
-      - name: Get ConfigLambdaArn from CloudFormation
-        id: get-lambda-arn
+      - name: Get outputs from CloudFormation
+        id: get-outputs
         run: |
-          echo "CONFIG_LAMBDA_ARN=$(jq -r '."veda-keycloak-${{ inputs.environment }}".ConfigLambdaArn' outputs.json)" >> $GITHUB_ENV
+          STACK_KEY="veda-keycloak-${{ inputs.environment }}"
+          echo "CONFIG_LAMBDA_ARN=$(jq -r ".\"$STACK_KEY\".ConfigLambdaArn" outputs.json)" >> $GITHUB_ENV
+          echo "CLUSTER_NAME=$(jq -r ".\"$STACK_KEY\".ClusterName" outputs.json)" >> $GITHUB_ENV
+          echo "SERVICE_NAME=$(jq -r ".\"$STACK_KEY\".ServiceName" outputs.json)" >> $GITHUB_ENV
+
+      - name: Wait for Keycloak service to stabilize
+        run: |
+          echo "Waiting for ECS service $SERVICE_NAME in cluster $CLUSTER_NAME to stabilize..."
+          aws ecs wait services-stable --cluster "$CLUSTER_NAME" --services "$SERVICE_NAME"
+          echo "Keycloak service is stable."
 
       - name: Apply Config
         run: uv run bin/apply-config.py $CONFIG_LAMBDA_ARN $(echo '${{ toJSON(vars) }}' | jq -c .)
