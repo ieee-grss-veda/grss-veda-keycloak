@@ -67,8 +67,8 @@ identityProviderMappers:
       syncMode: "FORCE"
       group: $(env:JUPYTERHUB_DEFAULT_GROUP:-JupyterHub Basic User)
 
-# Login Flow Configuration - auto-redirect to GitHub
-browserFlow: Browser without Password
+# Login Flow Configuration - show choice between GitHub SSO and Guest login
+browserFlow: Browser with Choice
 authenticationFlows:
   # Post-broker login flow for email whitelist checking
   # Whitelist is managed via 'ssoEmailWhitelist' realm attribute (Admin REST API)
@@ -94,39 +94,34 @@ authenticationFlows:
         priority: 10
         autheticatorFlow: false
         userSetupAllowed: false
-      - authenticator: auth-spnego
-        authenticatorFlow: false
-        requirement: DISABLED
-        priority: 20
-        autheticatorFlow: false
-        userSetupAllowed: false
       - authenticatorFlow: true
         requirement: ALTERNATIVE
-        priority: 30
+        priority: 20
         autheticatorFlow: true
-        flowAlias: Browser without Password forms
+        flowAlias: Forms
         userSetupAllowed: false
-  - alias: Browser without Password forms
-    description: Username, password, otp and other auth forms.
+
+  - alias: Forms
+    description: Username/password forms
     providerId: basic-flow
     topLevel: false
     builtIn: false
     authenticationExecutions:
-      - authenticatorConfig: github
-        authenticator: identity-provider-redirector
+      - authenticator: auth-username-password-form
         authenticatorFlow: false
         requirement: REQUIRED
-        priority: 20
+        priority: 10
         autheticatorFlow: false
         userSetupAllowed: false
       - authenticatorFlow: true
         requirement: CONDITIONAL
-        priority: 21
+        priority: 20
         autheticatorFlow: true
-        flowAlias: Browser without Password Browser - Conditional OTP
+        flowAlias: Browser - Conditional OTP
         userSetupAllowed: false
-  - alias: Browser without Password Browser - Conditional OTP
-    description: Flow to determine if the OTP is required for the authentication
+
+  - alias: Browser - Conditional OTP
+    description: OTP if configured
     providerId: basic-flow
     topLevel: false
     builtIn: false
@@ -143,7 +138,3 @@ authenticationFlows:
         priority: 20
         autheticatorFlow: false
         userSetupAllowed: false
-authenticatorConfig:
-  - alias: github
-    config:
-      defaultProvider: github
