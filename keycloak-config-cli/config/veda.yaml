@@ -14,20 +14,10 @@ registrationFlow: registration with invitation code
 browserFlow: browser
 
 # Invitation codes for guest user registration
+# Set VEDA_INVITATION_CODES per environment (GitHub Actions repository variables)
+# JSON format: {"CODE": {"groupName": "Group Name", "enabled": true, "description": "..."}}
 attributes:
-  invitation_codes: |
-    {
-      "GUEST2024": {
-        "groupName": "Guest Users - Basic",
-        "enabled": true,
-        "description": "Basic guest access for 2024"
-      },
-      "RESEARCHER2024": {
-        "groupName": "Guest Users - Researcher",
-        "enabled": true,
-        "description": "Researcher access with JupyterHub"
-      }
-    }
+  invitation_codes: $(env:VEDA_INVITATION_CODES:-{})
 
 clients:
   - clientId: account-console
