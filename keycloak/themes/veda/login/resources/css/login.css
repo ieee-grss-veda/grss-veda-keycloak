@@ -1,0 +1,47 @@
+/* IdP buttons - primary, prominent styling */
+#kc-social-providers {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+#kc-social-providers ul {
+    padding: 0;
+}
+
+#kc-social-providers li a {
+    font-size: 16px;
+    padding: 12px 16px;
+}
+
+/* Divider between IdP and password form */
+.kc-form-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0 16px 0;
+    color: #6c757d;
+    font-size: 13px;
+}
+
+.kc-form-divider hr {
+    flex: 1;
+    border: none;
+    border-top: 1px solid #dee2e6;
+    margin: 0;
+}
+
+.kc-form-divider span {
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+}
+
+/* Password form - secondary, muted styling */
+.kc-form-secondary {
+    opacity: 0.85;
+}
+
+.kc-form-secondary:focus-within {
+    opacity: 1;
+}
