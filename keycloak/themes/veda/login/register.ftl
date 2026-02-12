@@ -158,13 +158,5 @@
                 </div>
             </div>
         </form>
-    </#elseif section = "info" >
-        <#if realm.password && realm.registrationAllowed && !registrationDisabled??>
-            <div id="kc-registration-container">
-                <div id="kc-registration">
-                    <span>${msg("registerPreamble")}</span>
-                </div>
-            </div>
-        </#if>
     </#if>
 </@layout.registrationLayout>
