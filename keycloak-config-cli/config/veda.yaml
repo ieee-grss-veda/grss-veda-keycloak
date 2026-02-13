@@ -17,7 +17,8 @@ browserFlow: browser
 # Set VEDA_INVITATION_CODES per environment (GitHub Actions repository variables)
 # JSON format: {"CODE": {"groupName": "Group Name", "enabled": true, "description": "..."}}
 attributes:
-  invitation_codes: $(env:VEDA_INVITATION_CODES:-{})
+  invitation_codes: >
+    $(env:VEDA_INVITATION_CODES:-{})
 
 clients:
   - clientId: account-console

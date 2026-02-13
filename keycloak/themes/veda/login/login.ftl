@@ -27,13 +27,24 @@
 
                 <div class="kc-form-divider">
                     <hr />
-                    <span>${msg("weightedOr")}</span>
+                    <span>OR</span>
                     <hr />
+                </div>
+
+                <div class="kc-guest-toggle">
+                    <a href="#" id="kc-guest-login-toggle" onclick="document.getElementById('kc-guest-form').style.display='block';this.parentElement.style.display='none';document.getElementById('username').focus();return false;">
+                        ${msg("guestLoginToggle")}
+                    </a>
                 </div>
             </#if>
 
-            <#-- Email/Password form (SECONDARY) -->
-            <div id="kc-form-wrapper" class="kc-form-secondary">
+            <#-- Email/Password form (hidden by default, shown on toggle) -->
+            <div id="kc-guest-form" class="kc-form-secondary" style="<#if social?? && social.providers?has_content>display:none</#if>">
+                <#if social?? && social.providers?has_content>
+                    <div class="kc-form-divider">
+                        <span>${msg("guestLoginHeading")}</span>
+                    </div>
+                </#if>
                 <#if realm.password>
                     <form id="kc-form-login" onsubmit="login.disabled = true; return true;" action="${url.loginAction}" method="post">
                         <#if !usernameHidden??>
@@ -106,11 +117,19 @@
             </div>
         </div>
         <script type="module" src="${url.resourcesPath}/js/passwordVisibility.js"></script>
+        <#-- Show guest form automatically if there are login errors -->
+        <#if messagesPerField.existsError('username','password')>
+        <script>
+            document.getElementById('kc-guest-form').style.display = 'block';
+            var toggle = document.getElementById('kc-guest-login-toggle');
+            if (toggle) toggle.parentElement.style.display = 'none';
+        </script>
+        </#if>
     <#elseif section = "info">
         <#if realm.password && realm.registrationAllowed && !registrationDisabled??>
             <div id="kc-registration-container">
                 <div id="kc-registration">
-                    <span>${msg("noAccount")} <a tabindex="8" href="${url.registrationUrl}">${msg("doRegister")}</a></span>
+                    <span>${msg("guestHaveInviteCode")} <a tabindex="8" href="${url.registrationUrl}">${msg("doRegister")}</a></span>
                 </div>
             </div>
         </#if>
