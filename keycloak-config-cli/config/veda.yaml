@@ -175,7 +175,7 @@ clients:
     secret: $(env:JUPYTERHUB_CLIENT_SECRET)
     publicClient: false
     attributes:
-      post.logout.redirect.uris: "+"
+      post.logout.redirect.uris: $(env:JUPYTERHUB_CLIENT_URL)/*
     redirectUris:
       - $(env:JUPYTERHUB_CLIENT_URL)/hub/oauth_callback
     webOrigins:
