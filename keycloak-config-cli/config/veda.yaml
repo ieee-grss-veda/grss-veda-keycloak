@@ -14,7 +14,8 @@ clients:
     protocol: openid-connect
     standardFlowEnabled: true
     fullScopeAllowed: true
-    attributes: {}
+    attributes:
+      post.logout.redirect.uris: "+"
     redirectUris:
       - $(env:ACCOUNT_CONSOLE_URL)/*
     webOrigins:
@@ -29,7 +30,8 @@ clients:
     name: STAC Catalog
     rootUrl: $(env:STAC_CLIENT_URL)
     publicClient: true
-    attributes: {}
+    attributes:
+      post.logout.redirect.uris: "+"
     redirectUris:
       - $(env:STAC_CLIENT_URL)/*
     webOrigins:
@@ -75,9 +77,9 @@ clients:
     name: STAC Ingest API
     rootUrl: $(env:INGEST_API_CLIENT_URL)
     publicClient: true
-    attributes: {
-      "access.token.lifespan": "3600",
-    }
+    attributes:
+      "access.token.lifespan": "3600"
+      post.logout.redirect.uris: "+"
     redirectUris:
       - $(env:INGEST_API_CLIENT_URL)/*
     webOrigins:
@@ -124,7 +126,8 @@ clients:
     rootUrl: $(env:INGEST_UI_CLIENT_URL)
     secret: $(env:INGEST_UI_CLIENT_SECRET)
     publicClient: false
-    attributes: {}
+    attributes:
+      post.logout.redirect.uris: "+"
     redirectUris:
       - $(env:INGEST_UI_CLIENT_URL)/*
     webOrigins:
@@ -146,7 +149,8 @@ clients:
     rootUrl: $(env:AIRFLOW_CLIENT_URL)
     secret: $(env:VEDA_AIRFLOW_CLIENT_SECRET)
     publicClient: false
-    attributes: {}
+    attributes:
+      post.logout.redirect.uris: "+"
     redirectUris:
       - $(env:AIRFLOW_CLIENT_URL)/*
     webOrigins:
@@ -170,7 +174,8 @@ clients:
     rootUrl: $(env:JUPYTERHUB_CLIENT_URL)
     secret: $(env:JUPYTERHUB_CLIENT_SECRET)
     publicClient: false
-    attributes: {}
+    attributes:
+      post.logout.redirect.uris: "+"
     redirectUris:
       - $(env:JUPYTERHUB_CLIENT_URL)/hub/oauth_callback
     webOrigins:
