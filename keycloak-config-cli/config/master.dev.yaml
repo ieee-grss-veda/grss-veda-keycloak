@@ -21,7 +21,7 @@ identityProviders:
       clientSecret: $(env:GH_CLIENT_SECRET)
       defaultScope: openid read:org user:email
       organization: ieee-grss-veda
-      team: $(env:GH_ADMIN_TEAM:-"jyaasa")
+      team: $(env:GH_ADMIN_TEAM)
       caseSensitiveOriginalUsername: "false"
       syncMode: FORCE
 
