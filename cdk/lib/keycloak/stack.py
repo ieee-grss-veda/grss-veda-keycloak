@@ -32,6 +32,8 @@ class KeycloakStack(Stack):
         hosted_zone_domain: Optional[str] = None,
         vpc_id: Optional[str] = None,
         rds_snapshot_identifier: Optional[str] = None,
+        stage: str = "dev",
+        saml_secrets: Optional[dict] = None,
         **kwargs,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
@@ -78,6 +80,8 @@ class KeycloakStack(Stack):
             idp_oauth_client_secrets=idp_oauth_client_secrets,
             private_oauth_clients=private_oauth_clients,
             version=keycloak_config_cli_version,
+            stage=stage,
+            saml_secrets=saml_secrets,
         )
 
         if configure_route53:

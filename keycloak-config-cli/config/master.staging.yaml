@@ -1,0 +1,19 @@
+---
+# Staging environment overrides for master realm
+# Password-only authentication (no SAML)
+enabled: true
+realm: master
+
+# Use default browser flow (username/password only)
+browserFlow: browser
+
+# Explicitly remove any identity providers (e.g., GitHub from dev)
+identityProviders: []
+identityProviderMappers: []
+
+# Remove custom auth flows (keeps only built-in flows)
+authenticationFlows: []
+authenticatorConfig: []
+
+# Note: Admin user is managed by Keycloak bootstrap process via Secrets Manager
+# Do not define users here to avoid conflicts with existing bootstrap admin

@@ -38,14 +38,34 @@ services:
       KEYCLOAK_PASSWORD: admin
       KEYCLOAK_AVAILABILITYCHECK_ENABLED: true
       KEYCLOAK_AVAILABILITYCHECK_TIMEOUT: 120s
-      IMPORT_FILES_LOCATIONS: /config/*
+      # IMPORT_FILES_LOCATIONS controls which config files are loaded
+      # For dev (default): base files + dev overrides (GitHub IDP)
+      # For staging/prod: base files + environment overrides (SAML IDP)
+      # Override this env var to test staging/prod configs locally
+      IMPORT_FILES_LOCATIONS: ${IMPORT_FILES_LOCATIONS:-/config/master.yaml,/config/master.dev.yaml,/config/veda.yaml,/config/veda.dev.yaml}
       IMPORT_CACHE_ENABLED: false
       IMPORT_VARSUBSTITUTION_ENABLED: true
-      # Mock secrets
+      # Mock secrets for GitHub IDP (dev)
       GRAFANA_CLIENT_SECRET: mock_grafana_client_secret
       GRAFANA_CLIENT_URL: http://localhost:3000
       CILOGON_CLIENT_ID: abc13
       CILOGON_CLIENT_SECRET: abc123
+      # Mock secrets for SAML IDP (staging/prod testing)
+      # Uncomment and set these when testing SAML locally
+      # SAML_ENTITY_ID: https://mock-idp.example.com/metadata
+      # SAML_SSO_URL: https://mock-idp.example.com/sso
+      # SAML_SLO_URL: https://mock-idp.example.com/slo
+      # SAML_SIGNING_CERTIFICATE: <base64-encoded-cert>
+      # SAML_IDP_DISPLAY_NAME: Mock SAML IDP
+      # VEDA_SAML_ENTITY_ID: https://mock-idp.example.com/metadata
+      # VEDA_SAML_SSO_URL: https://mock-idp.example.com/sso
+      # VEDA_SAML_SLO_URL: https://mock-idp.example.com/slo
+      # VEDA_SAML_SIGNING_CERTIFICATE: <base64-encoded-cert>
+      # VEDA_SAML_IDP_DISPLAY_NAME: Mock SAML IDP
+      # Master admin user for SAML testing
+      # MASTER_ADMIN_USERNAME: admin
+      # MASTER_ADMIN_EMAIL: admin@example.com
+      # MASTER_ADMIN_PASSWORD: admin123
     env_file:
       - path: ./.env
         required: false
