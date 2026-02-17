@@ -34,6 +34,10 @@ class KeycloakStack(Stack):
         rds_snapshot_identifier: Optional[str] = None,
         stage: str = "dev",
         saml_secrets: Optional[dict] = None,
+        ecs_cpu: int = 512,
+        ecs_memory_mib: int = 1024,
+        rds_instance_class: str = "BURSTABLE4_GRAVITON",
+        rds_instance_size: str = "SMALL",
         **kwargs,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
@@ -51,6 +55,8 @@ class KeycloakStack(Stack):
             database_name="keycloak",
             is_production=is_production,
             snapshot_identifier=rds_snapshot_identifier,
+            instance_class=rds_instance_class,
+            instance_size=rds_instance_size,
         )
 
         kc_service = KeycloakService(
@@ -63,6 +69,8 @@ class KeycloakStack(Stack):
             version=keycloak_version,
             hostname=hostname,
             ssl_certificate_arn=ssl_certificate_arn,
+            cpu=ecs_cpu,
+            memory_limit_mib=ecs_memory_mib,
         )
 
         KeycloakConfig(

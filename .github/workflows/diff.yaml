@@ -58,6 +58,11 @@ jobs:
           HOSTED_ZONE_DOMAIN: ${{ vars.HOSTED_ZONE_DOMAIN }}
           # Imported Identity Provider secrets
           IDP_SECRET_ARN_GH: ${{ vars.IDP_SECRET_ARN_GH }}
+          # Resource sizing (optional overrides - defaults to lower resources for dev/staging)
+          ECS_CPU: ${{ vars.ECS_CPU }}
+          ECS_MEMORY_MIB: ${{ vars.ECS_MEMORY_MIB }}
+          RDS_INSTANCE_CLASS: ${{ vars.RDS_INSTANCE_CLASS }}
+          RDS_INSTANCE_SIZE: ${{ vars.RDS_INSTANCE_SIZE }}
 
       - name: Diff CDK
         uses: corymhall/cdk-diff-action@v2
