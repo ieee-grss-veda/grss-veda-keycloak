@@ -1,7 +1,6 @@
-version: "3"
 services:
   keycloak:
-    build: 
+    build:
       context: ./keycloak
       args:
         KEYCLOAK_VERSION: 26.1.3
@@ -13,7 +12,7 @@ services:
       # SSO Email Whitelist - comma-separated list of allowed emails/domains
       # Supports exact emails (user@example.com) and domain wildcards (*@nasa.gov)
       # When empty or not set, all SSO users can log in
-      # SSO_EMAIL_WHITELIST: "user1@example.com,*@nasa.gov"
+      SSO_EMAIL_WHITELIST: "alice@local.test,bob@local.test,*@nasa.gov"
     ports:
       - 8080:8080
       - 9000:9000
@@ -24,10 +23,6 @@ services:
       - 'true'
       - --hostname-strict
       - 'false'
-    develop:
-      watch:
-        - action: rebuild
-          path: ./keycloak
 
   keycloak-config-cli:
     build:
@@ -40,15 +35,15 @@ services:
       KEYCLOAK_URL: http://keycloak:8080
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
-      KEYCLOAK_AVAILABILITYCHECK_ENABLED: true
+      KEYCLOAK_AVAILABILITYCHECK_ENABLED: "true"
       KEYCLOAK_AVAILABILITYCHECK_TIMEOUT: 120s
       # IMPORT_FILES_LOCATIONS controls which config files are loaded
       # For dev (default): base files + dev overrides (GitHub IDP)
       # For staging/prod: base files + environment overrides (SAML IDP)
-      # Override this env var to test staging/prod configs locally
-      IMPORT_FILES_LOCATIONS: ${IMPORT_FILES_LOCATIONS:-/config/master.yaml,/config/master.dev.yaml,/config/veda.yaml,/config/veda.dev.yaml}
-      IMPORT_CACHE_ENABLED: false
-      IMPORT_VARSUBSTITUTION_ENABLED: true
+      # For local testing: /config/master.yaml,/config/master.local.yaml,/config/veda.yaml,/config/veda.local.yaml
+      IMPORT_FILES_LOCATIONS: ${IMPORT_FILES_LOCATIONS:-/config/master.yaml,/config/master.local.yaml,/config/veda.yaml,/config/veda.local.yaml}
+      IMPORT_CACHE_ENABLED: "false"
+      IMPORT_VARSUBSTITUTION_ENABLED: "true"
       # Mock secrets for GitHub IDP (dev)
       GRAFANA_CLIENT_SECRET: mock_grafana_client_secret
       GRAFANA_CLIENT_URL: http://localhost:3000
@@ -71,14 +66,9 @@ services:
       # MASTER_ADMIN_EMAIL: admin@example.com
       # MASTER_ADMIN_PASSWORD: admin123
     env_file:
-      - path: ./.env
-        required: false
+      - .env
     restart: "no"
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./keycloak-config-cli/config
-          target: /config
+
   grafana:
     profiles:
       - grafana

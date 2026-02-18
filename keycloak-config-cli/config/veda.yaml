@@ -5,6 +5,7 @@ enabled: true
 realm: veda
 displayName: Applications
 displayNameHtml: VEDA Ecosystem
+loginTheme: veda
 
 clients:
   - clientId: account-console
