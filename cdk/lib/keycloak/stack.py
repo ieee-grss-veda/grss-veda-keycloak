@@ -34,6 +34,7 @@ class KeycloakStack(Stack):
         rds_snapshot_identifier: Optional[str] = None,
         stage: str = "dev",
         saml_secrets: Optional[dict] = None,
+        sso_email_whitelist: str = "",
         **kwargs,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
@@ -63,6 +64,7 @@ class KeycloakStack(Stack):
             version=keycloak_version,
             hostname=hostname,
             ssl_certificate_arn=ssl_certificate_arn,
+            sso_email_whitelist=sso_email_whitelist,
         )
 
         KeycloakConfig(

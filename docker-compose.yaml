@@ -10,6 +10,10 @@ services:
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
       KEYCLOAK_LOGLEVEL: INFO
       ROOT_LOGLEVEL: INFO
+      # SSO Email Whitelist - comma-separated list of allowed emails/domains
+      # Supports exact emails (user@example.com) and domain wildcards (*@nasa.gov)
+      # When empty or not set, all SSO users can log in
+      # SSO_EMAIL_WHITELIST: "user1@example.com,*@nasa.gov"
     ports:
       - 8080:8080
       - 9000:9000

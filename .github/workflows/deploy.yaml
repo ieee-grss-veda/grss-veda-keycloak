@@ -76,6 +76,7 @@ jobs:
           RDS_SNAPSHOT_IDENTIFIER: ${{ vars.RDS_SNAPSHOT_IDENTIFIER }}
           CONFIGURE_ROUTE53: ${{ vars.CONFIGURE_ROUTE53 }}
           HOSTED_ZONE_DOMAIN: ${{ vars.HOSTED_ZONE_DOMAIN }}
+          SSO_EMAIL_WHITELIST: ${{ vars.SSO_EMAIL_WHITELIST }}
 
       - name: Get ConfigLambdaArn from CloudFormation
         id: get-lambda-arn

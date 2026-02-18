@@ -10,6 +10,7 @@ identityProviders:
     displayName: GitHub
     providerId: github
     enabled: true
+    postBrokerLoginFlowAlias: "Email Whitelist Check"
     updateProfileFirstLoginMode: on
     trustEmail: false
     storeToken: false

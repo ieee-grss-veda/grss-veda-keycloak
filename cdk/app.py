@@ -88,6 +88,7 @@ KeycloakStack(
     rds_snapshot_identifier=settings.rds_snapshot_identifier,
     stage=settings.stage,
     saml_secrets=saml_secrets if saml_secrets else None,
+    sso_email_whitelist=settings.sso_email_whitelist,
     # Stack Configuration
     env={
         "account": settings.aws_account_id,

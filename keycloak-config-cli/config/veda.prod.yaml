@@ -14,6 +14,7 @@ identityProviders:
     displayName: $(env:VEDA_SAML_IDP_DISPLAY_NAME:-Enterprise SSO)
     providerId: saml
     enabled: true
+    postBrokerLoginFlowAlias: "Email Whitelist Check"
     updateProfileFirstLoginMode: on
     trustEmail: true
     storeToken: false
