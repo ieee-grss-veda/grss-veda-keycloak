@@ -35,6 +35,7 @@ class KeycloakService(Construct):
         ssl_certificate_arn: str,
         cpu: int = 512,
         memory_limit_mib: int = 1024,
+        health_check_grace_period_seconds: int = 120,
         **kwargs,
     ) -> None:
         """
@@ -109,7 +110,7 @@ class KeycloakService(Construct):
             certificate=certificate,
             memory_limit_mib=memory_limit_mib,
             cpu=cpu,
-            health_check_grace_period=Duration.seconds(120),
+            health_check_grace_period=Duration.seconds(health_check_grace_period_seconds),
             redirect_http=False,
             task_image_options=ecs_patterns.ApplicationLoadBalancedTaskImageOptions(
                 container_name="keycloak",

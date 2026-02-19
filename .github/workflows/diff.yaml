@@ -63,6 +63,7 @@ jobs:
           ECS_MEMORY_MIB: ${{ vars.ECS_MEMORY_MIB }}
           RDS_INSTANCE_CLASS: ${{ vars.RDS_INSTANCE_CLASS }}
           RDS_INSTANCE_SIZE: ${{ vars.RDS_INSTANCE_SIZE }}
+          ECS_HEALTH_CHECK_GRACE_PERIOD: ${{ vars.ECS_HEALTH_CHECK_GRACE_PERIOD }}
 
       - name: Diff CDK
         uses: corymhall/cdk-diff-action@v2
