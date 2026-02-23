@@ -31,8 +31,8 @@ identityProviders:
       signingCertificate: $(env:VEDA_SAML_SIGNING_CERTIFICATE)
       nameIDPolicyFormat: $(env:SAML_NAMEID_FORMAT:-urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified)
       principalType: SUBJECT
-      # Sign outgoing AuthnRequests (required by most IDPs)
-      authnRequestsSigned: "true"
+      # Sign outgoing SAML requests: AuthnRequests and LogoutRequests
+      wantAuthnRequestsSigned: "true"
       postBindingAuthnRequest: "true"
       postBindingResponse: "true"
       postBindingLogout: "true"
@@ -41,8 +41,6 @@ identityProviders:
       wantAssertionsEncrypted: "false"
       validateSignature: "true"
       signatureAlgorithm: RSA_SHA256
-      # Sign ALL outgoing SAML messages (AuthnRequests, LogoutRequests, LogoutResponses)
-      signaturesRequired: "true"
       syncMode: FORCE
 
 identityProviderMappers:
