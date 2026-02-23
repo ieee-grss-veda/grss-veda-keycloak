@@ -40,6 +40,8 @@ identityProviders:
       wantAssertionsEncrypted: "false"
       validateSignature: "true"
       signatureAlgorithm: RSA_SHA256
+      # Sign ALL outgoing SAML messages (AuthnRequests, LogoutRequests, LogoutResponses)
+      signaturesRequired: "true"
       syncMode: FORCE
 
 identityProviderMappers:
