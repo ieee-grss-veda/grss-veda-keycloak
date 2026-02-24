@@ -36,8 +36,8 @@ identityProviders:
       postBindingAuthnRequest: "true"
       postBindingResponse: "true"
       postBindingLogout: "true"
-      # Validate incoming assertions
-      wantAssertionsSigned: "true"
+      # Validate incoming response signature (Response envelope)
+      wantAssertionsSigned: "false"
       wantAssertionsEncrypted: "false"
       validateSignature: "true"
       signatureAlgorithm: RSA_SHA256
