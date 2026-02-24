@@ -88,6 +88,12 @@ KeycloakStack(
     rds_snapshot_identifier=settings.rds_snapshot_identifier,
     stage=settings.stage,
     saml_secrets=saml_secrets if saml_secrets else None,
+    # Resource sizing
+    ecs_cpu=settings.ecs_cpu,
+    ecs_memory_mib=settings.ecs_memory_mib,
+    rds_instance_class=settings.rds_instance_class,
+    rds_instance_size=settings.rds_instance_size,
+    ecs_health_check_grace_period=settings.ecs_health_check_grace_period,
     # Stack Configuration
     env={
         "account": settings.aws_account_id,
