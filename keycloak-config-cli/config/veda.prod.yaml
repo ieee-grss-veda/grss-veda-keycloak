@@ -111,6 +111,18 @@ identityProviderMappers:
 # Auth flow that redirects to SAML
 # For veda realm, we auto-redirect to SAML (no password login option)
 authenticationFlows:
+  # Post-broker login flow for email whitelist checking
+  # Whitelist is managed via Admin Console: Authentication -> Flows -> gear icon
+  - alias: "Email Whitelist Check"
+    description: "Checks user email against configurable whitelist"
+    providerId: basic-flow
+    topLevel: true
+    builtIn: false
+    authenticationExecutions:
+      - authenticator: email-whitelist
+        authenticatorFlow: false
+        requirement: REQUIRED
+        priority: 10
   - alias: Browser with SAML
     description: Browser authentication redirecting to SAML SSO
     providerId: basic-flow

@@ -70,6 +70,18 @@ identityProviderMappers:
 # Login Flow Configuration - auto-redirect to GitHub
 browserFlow: Browser without Password
 authenticationFlows:
+  # Post-broker login flow for email whitelist checking
+  # Whitelist is managed via Admin Console: Authentication -> Flows -> gear icon
+  - alias: "Email Whitelist Check"
+    description: "Checks user email against configurable whitelist"
+    providerId: basic-flow
+    topLevel: true
+    builtIn: false
+    authenticationExecutions:
+      - authenticator: email-whitelist
+        authenticatorFlow: false
+        requirement: REQUIRED
+        priority: 10
   - alias: Browser without Password
     description: browser based authentication without username password form
     providerId: basic-flow

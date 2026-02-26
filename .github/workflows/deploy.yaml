@@ -76,7 +76,6 @@ jobs:
           RDS_SNAPSHOT_IDENTIFIER: ${{ vars.RDS_SNAPSHOT_IDENTIFIER }}
           CONFIGURE_ROUTE53: ${{ vars.CONFIGURE_ROUTE53 }}
           HOSTED_ZONE_DOMAIN: ${{ vars.HOSTED_ZONE_DOMAIN }}
-          SSO_EMAIL_WHITELIST: ${{ vars.SSO_EMAIL_WHITELIST }}
           # Resource sizing (optional overrides - defaults to lower resources for dev/staging)
           ECS_CPU: ${{ vars.ECS_CPU }}
           ECS_MEMORY_MIB: ${{ vars.ECS_MEMORY_MIB }}

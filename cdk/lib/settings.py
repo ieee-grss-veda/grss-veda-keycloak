@@ -21,7 +21,6 @@ class Settings(BaseSettings):
         default=None,
         pattern=r"^arn:aws:rds:[a-z0-9-]+:\d{12}:snapshot:.+$",
     )
-    sso_email_whitelist: str = ""
     configure_route53: Optional[bool] = True
 
     # Resource sizing (defaults are lower for dev/staging; prod overrides via env vars)

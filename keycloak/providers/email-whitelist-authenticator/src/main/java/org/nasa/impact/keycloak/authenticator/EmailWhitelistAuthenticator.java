@@ -3,6 +3,7 @@ package org.nasa.impact.keycloak.authenticator;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.authentication.AuthenticationFlowError;
 import org.keycloak.authentication.Authenticator;
+import org.keycloak.models.AuthenticatorConfigModel;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
@@ -16,14 +17,16 @@ import org.jboss.logging.Logger;
 public class EmailWhitelistAuthenticator implements Authenticator {
 
     private static final Logger logger = Logger.getLogger(EmailWhitelistAuthenticator.class);
-    static final String ENV_VAR_NAME = "SSO_EMAIL_WHITELIST";
 
     @Override
     public void authenticate(AuthenticationFlowContext context) {
-        String whitelist = System.getenv(ENV_VAR_NAME);
+        AuthenticatorConfigModel configModel = context.getAuthenticatorConfig();
+        String whitelist = (configModel != null && configModel.getConfig() != null)
+                ? configModel.getConfig().get(EmailWhitelistAuthenticatorFactory.CONFIG_EMAIL_WHITELIST)
+                : null;
 
         if (whitelist == null || whitelist.trim().isEmpty()) {
-            logger.debug("SSO_EMAIL_WHITELIST not set, allowing all users");
+            logger.debug("Email whitelist not configured, allowing all users");
             context.success();
             return;
         }

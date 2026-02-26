@@ -88,7 +88,6 @@ KeycloakStack(
     rds_snapshot_identifier=settings.rds_snapshot_identifier,
     stage=settings.stage,
     saml_secrets=saml_secrets if saml_secrets else None,
-    sso_email_whitelist=settings.sso_email_whitelist,
     # Resource sizing
     ecs_cpu=settings.ecs_cpu,
     ecs_memory_mib=settings.ecs_memory_mib,

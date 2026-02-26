@@ -33,7 +33,6 @@ class KeycloakService(Construct):
         version: str,
         hostname: str,
         ssl_certificate_arn: str,
-        sso_email_whitelist: str = "",
         cpu: int = 512,
         memory_limit_mib: int = 1024,
         health_check_grace_period_seconds: int = 120,
@@ -135,11 +134,6 @@ class KeycloakService(Construct):
                     # Trust proxy headers from ALB (X-Forwarded-* headers)
                     "KC_PROXY_HEADERS": "xforwarded",
                     "KC_HOSTNAME_STRICT": "false",
-                    **(
-                        {"SSO_EMAIL_WHITELIST": sso_email_whitelist}
-                        if sso_email_whitelist
-                        else {}
-                    ),
                 },
                 secrets={
                     # Database credentials

@@ -444,17 +444,3 @@ users:
     clientRoles:
       ingest-api:
       - Admin
-
-# Post-broker login flow for email whitelist checking
-# Only enforced when SSO_EMAIL_WHITELIST env var is set on the Keycloak server
-authenticationFlows:
-  - alias: "Email Whitelist Check"
-    description: "Checks user email against SSO_EMAIL_WHITELIST env var"
-    providerId: basic-flow
-    topLevel: true
-    builtIn: false
-    authenticationExecutions:
-      - authenticator: email-whitelist
-        authenticatorFlow: false
-        requirement: REQUIRED
-        priority: 10
