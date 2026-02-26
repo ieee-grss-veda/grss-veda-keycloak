@@ -71,9 +71,9 @@ identityProviderMappers:
 browserFlow: Browser without Password
 authenticationFlows:
   # Post-broker login flow for email whitelist checking
-  # Whitelist is managed via Admin Console: Authentication -> Flows -> gear icon
+  # Whitelist is managed via 'ssoEmailWhitelist' realm attribute (Admin REST API)
   - alias: "Email Whitelist Check"
-    description: "Checks user email against configurable whitelist"
+    description: "Checks user email against 'ssoEmailWhitelist' realm attribute"
     providerId: basic-flow
     topLevel: true
     builtIn: false
