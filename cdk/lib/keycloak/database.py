@@ -18,6 +18,8 @@ class KeycloakDatabase(Construct):
         instance_identifier: str = None,
         is_production: bool = False,
         snapshot_identifier: str = None,
+        instance_class: str = "BURSTABLE4_GRAVITON",
+        instance_size: str = "SMALL",
         **kwargs,
     ) -> None:
         """
@@ -27,6 +29,8 @@ class KeycloakDatabase(Construct):
         :param database_name: Name of the database to create
         :param instance_identifier: Optional identifier for the RDS instance
         :param is_production: Whether the database is in production
+        :param instance_class: RDS instance class (e.g. "BURSTABLE4_GRAVITON")
+        :param instance_size: RDS instance size (e.g. "SMALL", "MEDIUM")
         :param kwargs: Additional DatabaseInstanceProps (except 'engine', which is set to Postgres)
         """
         super().__init__(scope, construct_id)
@@ -38,7 +42,7 @@ class KeycloakDatabase(Construct):
             ),
             "instance_identifier": instance_identifier,
             "instance_type": ec2.InstanceType.of(
-                ec2.InstanceClass.BURSTABLE4_GRAVITON, ec2.InstanceSize.MEDIUM
+                ec2.InstanceClass[instance_class], ec2.InstanceSize[instance_size]
             ),
             "removal_policy": (
                 RemovalPolicy.RETAIN if is_production else RemovalPolicy.DESTROY

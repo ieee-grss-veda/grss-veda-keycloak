@@ -33,6 +33,9 @@ class KeycloakService(Construct):
         version: str,
         hostname: str,
         ssl_certificate_arn: str,
+        cpu: int = 512,
+        memory_limit_mib: int = 1024,
+        health_check_grace_period_seconds: int = 120,
         **kwargs,
     ) -> None:
         """
@@ -44,6 +47,8 @@ class KeycloakService(Construct):
         :param version: The Keycloak version (e.g. "21.1.2")
         :param hostname: The Keycloak hostname
         :param ssl_certificate_arn: ARN of the SSL Certificate for the ALB
+        :param cpu: Fargate task CPU units (256, 512, 1024, 2048, or 4096)
+        :param memory_limit_mib: Fargate task memory in MiB
         """
         super().__init__(scope, construct_id, **kwargs)
 
@@ -103,9 +108,9 @@ class KeycloakService(Construct):
             public_load_balancer=True,
             listener_port=443,
             certificate=certificate,
-            memory_limit_mib=2048,
-            cpu=1024,
-            health_check_grace_period=Duration.seconds(120),
+            memory_limit_mib=memory_limit_mib,
+            cpu=cpu,
+            health_check_grace_period=Duration.seconds(health_check_grace_period_seconds),
             redirect_http=False,
             task_image_options=ecs_patterns.ApplicationLoadBalancedTaskImageOptions(
                 container_name="keycloak",

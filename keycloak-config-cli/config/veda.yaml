@@ -5,6 +5,7 @@ enabled: true
 realm: veda
 displayName: Applications
 displayNameHtml: VEDA Ecosystem
+loginTheme: veda
 
 clients:
   - clientId: account-console
@@ -220,6 +221,26 @@ clients:
           multivalued: "true"
           usermodel.clientRoleMapping.clientId: jupyterhub
           usermodel.clientRoleMapping.rolePrefix: ""
+
+  - clientId: monitoring
+    name: VEDA Monitoring
+    rootUrl: $(env:MONITORING_CLIENT_URL)
+    secret: $(env:MONITORING_CLIENT_SECRET)
+    publicClient: false
+    attributes: {}
+    redirectUris:
+      - $(env:MONITORING_CLIENT_URL)/*
+    webOrigins:
+      - "+"
+    protocol: openid-connect
+    fullScopeAllowed: true
+    defaultClientScopes:
+      - basic
+      - email
+      - groups
+      - roles
+      - profile
+
 roles:
   client:
     stac:
@@ -260,6 +281,14 @@ roles:
         description: Access to extra extra extra large instances (~121GB RAM)
       - name: GPU:T4
         description: Access to T4 GPU instances (1 T4 GPU)
+    monitoring:
+      - name: Admin
+        description: Admin role for administrative access to monitoring
+      - name: Editor
+        description: Editor role for managing monitoring
+      - name: Viewer
+        description: Viewer role for basic access to monitoring
+
 
 
 clientScopeMappings:
@@ -427,6 +456,18 @@ groups:
     clientRoles:
       jupyterhub:
         - GPU:T4
+  - name: Grafana Admins
+    clientRoles:
+      monitoring:
+        - Admin
+  - name: Grafana Editors
+    clientRoles:
+      monitoring:
+        - Editor
+  - name: Grafana Viewers
+    clientRoles:
+      monitoring:
+        - Viewer
 
 users:
   - username: service-account-airflow-stac-etl

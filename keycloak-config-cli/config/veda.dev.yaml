@@ -10,6 +10,7 @@ identityProviders:
     displayName: GitHub
     providerId: github
     enabled: true
+    postBrokerLoginFlowAlias: "Email Whitelist Check"
     updateProfileFirstLoginMode: on
     trustEmail: false
     storeToken: false
@@ -69,6 +70,18 @@ identityProviderMappers:
 # Login Flow Configuration - auto-redirect to GitHub
 browserFlow: Browser without Password
 authenticationFlows:
+  # Post-broker login flow for email whitelist checking
+  # Whitelist is managed via 'ssoEmailWhitelist' realm attribute (Admin REST API)
+  - alias: "Email Whitelist Check"
+    description: "Checks user email against 'ssoEmailWhitelist' realm attribute"
+    providerId: basic-flow
+    topLevel: true
+    builtIn: false
+    authenticationExecutions:
+      - authenticator: email-whitelist
+        authenticatorFlow: false
+        requirement: REQUIRED
+        priority: 10
   - alias: Browser without Password
     description: browser based authentication without username password form
     providerId: basic-flow

@@ -13,6 +13,7 @@ identityProviders:
     displayName: $(env:VEDA_SAML_IDP_DISPLAY_NAME:-Enterprise SSO)
     providerId: saml
     enabled: true
+    postBrokerLoginFlowAlias: "Email Whitelist Check"
     updateProfileFirstLoginMode: on
     trustEmail: true
     storeToken: false
@@ -30,13 +31,13 @@ identityProviders:
       signingCertificate: $(env:VEDA_SAML_SIGNING_CERTIFICATE)
       nameIDPolicyFormat: $(env:SAML_NAMEID_FORMAT:-urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified)
       principalType: SUBJECT
-      # Sign outgoing AuthnRequests (required by most IDPs)
-      authnRequestsSigned: "true"
+      # Sign outgoing SAML requests: AuthnRequests and LogoutRequests
+      wantAuthnRequestsSigned: "true"
       postBindingAuthnRequest: "true"
       postBindingResponse: "true"
       postBindingLogout: "true"
-      # Validate incoming assertions
-      wantAssertionsSigned: "true"
+      # Validate incoming response signature (Response envelope)
+      wantAssertionsSigned: "false"
       wantAssertionsEncrypted: "false"
       validateSignature: "true"
       signatureAlgorithm: RSA_SHA256
@@ -51,7 +52,7 @@ identityProviderMappers:
       syncMode: FORCE
       user.attribute: email
       attribute.name: $(env:SAML_EMAIL_ATTRIBUTE:-email)
-      attribute.name.format: urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified
+      attribute.name.format: ATTRIBUTE_FORMAT_UNSPECIFIED
 
   # Map SAML first name attribute
   - name: saml-firstname-mapper
@@ -61,7 +62,7 @@ identityProviderMappers:
       syncMode: FORCE
       user.attribute: firstName
       attribute.name: $(env:SAML_FIRSTNAME_ATTRIBUTE:-firstName)
-      attribute.name.format: urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified
+      attribute.name.format: ATTRIBUTE_FORMAT_UNSPECIFIED
 
   # Map SAML last name attribute
   - name: saml-lastname-mapper
@@ -71,7 +72,7 @@ identityProviderMappers:
       syncMode: FORCE
       user.attribute: lastName
       attribute.name: $(env:SAML_LASTNAME_ATTRIBUTE:-lastName)
-      attribute.name.format: urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified
+      attribute.name.format: ATTRIBUTE_FORMAT_UNSPECIFIED
 
   # Map SAML username attribute (IMPORT mode - only set on first login, preserve on subsequent logins)
   - name: saml-username-mapper
@@ -81,7 +82,7 @@ identityProviderMappers:
       syncMode: IMPORT
       user.attribute: username
       attribute.name: $(env:SAML_EMAIL_ATTRIBUTE:-email)
-      attribute.name.format: urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified
+      attribute.name.format: ATTRIBUTE_FORMAT_UNSPECIFIED
 
   # Assign default account roles
   - name: account-view-profile
@@ -109,6 +110,18 @@ identityProviderMappers:
 # Auth flow that redirects to SAML
 # For veda realm, we auto-redirect to SAML (no password login option)
 authenticationFlows:
+  # Post-broker login flow for email whitelist checking
+  # Whitelist is managed via 'ssoEmailWhitelist' realm attribute (Admin REST API)
+  - alias: "Email Whitelist Check"
+    description: "Checks user email against 'ssoEmailWhitelist' realm attribute"
+    providerId: basic-flow
+    topLevel: true
+    builtIn: false
+    authenticationExecutions:
+      - authenticator: email-whitelist
+        authenticatorFlow: false
+        requirement: REQUIRED
+        priority: 10
   - alias: Browser with SAML
     description: Browser authentication redirecting to SAML SSO
     providerId: basic-flow

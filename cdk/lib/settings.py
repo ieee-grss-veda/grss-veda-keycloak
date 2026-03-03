@@ -23,6 +23,28 @@ class Settings(BaseSettings):
     )
     configure_route53: Optional[bool] = True
 
+    # Resource sizing (defaults are lower for dev/staging; prod overrides via env vars)
+    ecs_cpu: int = 512
+    ecs_memory_mib: int = 1024
+    rds_instance_class: str = "BURSTABLE4_GRAVITON"
+    rds_instance_size: str = "SMALL"
+    ecs_health_check_grace_period: int = 120
+
+    @field_validator(
+        "ecs_cpu",
+        "ecs_memory_mib",
+        "rds_instance_class",
+        "rds_instance_size",
+        "ecs_health_check_grace_period",
+        mode="before",
+    )
+    @classmethod
+    def use_default_for_empty(cls, v, info):
+        """GitHub Actions passes empty string for unset vars; fall back to field default."""
+        if v == "":
+            return cls.model_fields[info.field_name].default
+        return v
+
     @field_validator("rds_snapshot_identifier", mode="before")
     @classmethod
     def convert_empty_string_to_none(cls, v):
