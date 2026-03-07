@@ -36,7 +36,7 @@ class KeycloakStack(Stack):
         saml_secrets: Optional[dict] = None,
         ecs_cpu: int = 512,
         ecs_memory_mib: int = 1024,
-        ecs_health_check_grace_period: int = 120,
+        ecs_health_check_grace_period: int = 180,
         rds_instance_class: str = "BURSTABLE4_GRAVITON",
         rds_instance_size: str = "SMALL",
         **kwargs,

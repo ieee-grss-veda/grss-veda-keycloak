@@ -35,7 +35,7 @@ class KeycloakService(Construct):
         ssl_certificate_arn: str,
         cpu: int = 512,
         memory_limit_mib: int = 1024,
-        health_check_grace_period_seconds: int = 120,
+        health_check_grace_period_seconds: int = 180,
         **kwargs,
     ) -> None:
         """
@@ -169,10 +169,10 @@ class KeycloakService(Construct):
             path="/health",
             port=str(health_management_port),  # 9000
             protocol=elbv2.Protocol.HTTP,
-            healthy_threshold_count=3,
+            healthy_threshold_count=2,
             unhealthy_threshold_count=2,
             timeout=Duration.seconds(5),
-            interval=Duration.seconds(60),
+            interval=Duration.seconds(30),
         )
 
         self.alb_service.service.connections.allow_from(

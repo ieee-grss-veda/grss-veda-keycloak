@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     ecs_memory_mib: int = 1024
     rds_instance_class: str = "BURSTABLE4_GRAVITON"
     rds_instance_size: str = "SMALL"
-    ecs_health_check_grace_period: int = 120
+    ecs_health_check_grace_period: int = 180
 
     @field_validator(
         "ecs_cpu",
