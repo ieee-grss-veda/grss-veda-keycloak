@@ -12,7 +12,7 @@ def get_oauth_secrets() -> dict[str, str]:
     client_secrets = {}
 
     for key, value in os.environ.items():
-        if key.startswith(oauth_secret_prefix):
+        if key.startswith(oauth_secret_prefix) and value:
             # The client slug is the remainder of the key after the prefix
             client_slug = key[len(oauth_secret_prefix) :]
             client_secrets[client_slug] = value
