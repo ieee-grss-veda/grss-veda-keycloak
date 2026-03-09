@@ -4,13 +4,14 @@
 enabled: true
 realm: veda
 displayName: Applications
-displayNameHtml: VEDA Ecosystem
+displayNameHtml: GRSS VEDA Ecosystem
 loginTheme: veda
 
 clients:
   - clientId: account-console
     name: Account Console
     rootUrl: $(env:ACCOUNT_CONSOLE_URL)
+    baseUrl: $(env:ACCOUNT_CONSOLE_URL)
     publicClient: true
     protocol: openid-connect
     standardFlowEnabled: true
@@ -30,7 +31,9 @@ clients:
   - clientId: stac
     name: STAC Catalog
     rootUrl: $(env:STAC_CLIENT_URL)
+    baseUrl: $(env:STAC_CLIENT_URL)
     publicClient: true
+    alwaysDisplayInConsole: true
     attributes:
       post.logout.redirect.uris: "+"
     redirectUris:
@@ -77,7 +80,9 @@ clients:
   - clientId: ingest-api
     name: STAC Ingest API
     rootUrl: $(env:INGEST_API_CLIENT_URL)
+    baseUrl: $(env:INGEST_API_CLIENT_URL)
     publicClient: true
+    alwaysDisplayInConsole: true
     attributes:
       "access.token.lifespan": "3600"
       post.logout.redirect.uris: "+"
@@ -125,8 +130,10 @@ clients:
   - clientId: ingest-ui
     name: Ingest UI
     rootUrl: $(env:INGEST_UI_CLIENT_URL)
+    baseUrl: $(env:INGEST_UI_CLIENT_URL)
     secret: $(env:INGEST_UI_CLIENT_SECRET)
     publicClient: false
+    alwaysDisplayInConsole: true
     attributes:
       post.logout.redirect.uris: "+"
     redirectUris:
@@ -148,8 +155,10 @@ clients:
   - clientId: veda-airflow
     name: Airflow
     rootUrl: $(env:AIRFLOW_CLIENT_URL)
+    baseUrl: $(env:AIRFLOW_CLIENT_URL)
     secret: $(env:VEDA_AIRFLOW_CLIENT_SECRET)
     publicClient: false
+    alwaysDisplayInConsole: true
     attributes:
       post.logout.redirect.uris: "+"
     redirectUris:
@@ -173,8 +182,10 @@ clients:
   - clientId: jupyterhub
     name: JupyterHub
     rootUrl: $(env:JUPYTERHUB_CLIENT_URL)
+    baseUrl: $(env:JUPYTERHUB_CLIENT_URL)
     secret: $(env:JUPYTERHUB_CLIENT_SECRET)
     publicClient: false
+    alwaysDisplayInConsole: true
     attributes:
       post.logout.redirect.uris: $(env:JUPYTERHUB_CLIENT_URL)/*
     redirectUris:
@@ -225,8 +236,10 @@ clients:
   - clientId: monitoring
     name: VEDA Monitoring
     rootUrl: $(env:MONITORING_CLIENT_URL)
+    baseUrl: $(env:MONITORING_CLIENT_URL)
     secret: $(env:MONITORING_CLIENT_SECRET)
     publicClient: false
+    alwaysDisplayInConsole: true
     attributes: {}
     redirectUris:
       - $(env:MONITORING_CLIENT_URL)/*
