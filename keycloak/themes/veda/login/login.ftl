@@ -17,7 +17,7 @@
                                         <i class="${properties.kcCommonLogoIdP!} ${p.iconClasses!}" aria-hidden="true"></i>
                                         <span class="${properties.kcFormSocialAccountNameClass!} kc-social-icon-text">${p.displayName!}</span>
                                     <#else>
-                                        <span class="${properties.kcFormSocialAccountNameClass!}">${p.displayName!}</span>
+                                        <span class="${properties.kcFormSocialAccountNameClass!}">${msg("loginSocialPrefix")} <strong>${p.displayName!}</strong></span>
                                     </#if>
                                 </a>
                             </li>
