@@ -30,6 +30,18 @@ class Settings(BaseSettings):
     rds_instance_size: str = "SMALL"
     ecs_health_check_grace_period: int = 180
 
+    # SMTP settings for email verification (set per environment via GitHub vars)
+    smtp_host: Optional[str] = None
+    smtp_port: str = "587"
+    smtp_from: Optional[str] = None
+    smtp_from_display_name: str = "GRSS VEDA"
+    smtp_reply_to: str = ""
+    smtp_ssl: str = "false"
+    smtp_starttls: str = "true"
+    smtp_auth: str = "true"
+    smtp_user: str = ""
+    smtp_password: str = ""
+
     @field_validator(
         "ecs_cpu",
         "ecs_memory_mib",
@@ -43,6 +55,14 @@ class Settings(BaseSettings):
         """GitHub Actions passes empty string for unset vars; fall back to field default."""
         if v == "":
             return cls.model_fields[info.field_name].default
+        return v
+
+    @field_validator("smtp_host", "smtp_from", mode="before")
+    @classmethod
+    def smtp_empty_to_none(cls, v):
+        """GitHub Actions passes empty string for unset vars; convert to None."""
+        if v == "":
+            return None
         return v
 
     @field_validator("rds_snapshot_identifier", mode="before")

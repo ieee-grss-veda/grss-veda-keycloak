@@ -11,12 +11,27 @@ loginTheme: veda
 registrationAllowed: true
 registrationEmailAsUsername: true
 registrationFlow: registration with invitation code
+verifyEmail: true
 browserFlow: browser
 
 # Invitation codes for guest user registration are managed via Admin REST API
 # (not declared here — config-cli would overwrite runtime changes on each deploy).
 # Use set-invitation-codes.sh to view/update codes.
 # JSON format: {"CODE": {"groupName": "Group Name", "enabled": true, "description": "..."}}
+
+# SMTP server for email verification and notifications
+# Set SMTP_* env vars per environment (GitHub Actions secrets / docker-compose)
+smtpServer:
+  host: $(env:SMTP_HOST)
+  port: $(env:SMTP_PORT:-587)
+  from: $(env:SMTP_FROM)
+  fromDisplayName: $(env:SMTP_FROM_DISPLAY_NAME:-GRSS VEDA)
+  replyTo: $(env:SMTP_REPLY_TO:-"")
+  ssl: $(env:SMTP_SSL:-false)
+  starttls: $(env:SMTP_STARTTLS:-true)
+  auth: $(env:SMTP_AUTH:-true)
+  user: $(env:SMTP_USER:-"")
+  password: $(env:SMTP_PASSWORD:-"")
 
 clients:
   - clientId: account-console

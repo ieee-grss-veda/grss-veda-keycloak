@@ -42,6 +42,14 @@ services:
       IMPORT_CACHE_ENABLED: "false"
       IMPORT_VARSUBSTITUTION_ENABLED: "true"
       # Invitation codes are managed via Admin REST API (set-invitation-codes.sh), not env vars
+      # SMTP config for email verification (uses Mailpit for local dev)
+      SMTP_HOST: mailpit
+      SMTP_PORT: "1025"
+      SMTP_FROM: noreply@veda.local
+      SMTP_FROM_DISPLAY_NAME: GRSS VEDA
+      SMTP_SSL: "false"
+      SMTP_STARTTLS: "false"
+      SMTP_AUTH: "false"
       # Mock secrets for GitHub IDP (dev)
       GRAFANA_CLIENT_SECRET: mock_grafana_client_secret
       GRAFANA_CLIENT_URL: http://localhost:3000
@@ -66,6 +74,12 @@ services:
     env_file:
       - .env
     restart: "no"
+
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - 1025:1025  # SMTP
+      - 8025:8025  # Web UI to view emails
 
   grafana:
     profiles:
