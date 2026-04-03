@@ -41,8 +41,7 @@ services:
       IMPORT_FILES_LOCATIONS: ${IMPORT_FILES_LOCATIONS:-/config/master.yaml,/config/master.local.yaml,/config/veda.yaml,/config/veda.local.yaml}
       IMPORT_CACHE_ENABLED: "false"
       IMPORT_VARSUBSTITUTION_ENABLED: "true"
-      # Invitation codes for guest registration (local dev defaults)
-      VEDA_INVITATION_CODES: '{"GUEST2024":{"groupName":"Guest Users - Basic","enabled":true,"description":"Basic guest access"},"RESEARCHER2024":{"groupName":"Guest Users - Researcher","enabled":true,"description":"Researcher access with JupyterHub"}}'
+      # Invitation codes are managed via Admin REST API (set-invitation-codes.sh), not env vars
       # Mock secrets for GitHub IDP (dev)
       GRAFANA_CLIENT_SECRET: mock_grafana_client_secret
       GRAFANA_CLIENT_URL: http://localhost:3000

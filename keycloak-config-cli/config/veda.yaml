@@ -13,12 +13,10 @@ registrationEmailAsUsername: true
 registrationFlow: registration with invitation code
 browserFlow: browser
 
-# Invitation codes for guest user registration
-# Set VEDA_INVITATION_CODES per environment (GitHub Actions repository variables)
+# Invitation codes for guest user registration are managed via Admin REST API
+# (not declared here — config-cli would overwrite runtime changes on each deploy).
+# Use set-invitation-codes.sh to view/update codes.
 # JSON format: {"CODE": {"groupName": "Group Name", "enabled": true, "description": "..."}}
-attributes:
-  invitation_codes: >
-    $(env:VEDA_INVITATION_CODES:-{})
 
 clients:
   - clientId: account-console

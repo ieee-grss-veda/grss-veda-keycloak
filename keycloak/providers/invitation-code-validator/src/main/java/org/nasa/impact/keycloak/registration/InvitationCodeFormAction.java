@@ -29,7 +29,7 @@ public class InvitationCodeFormAction implements FormAction {
     private static final String INVITATION_CODE_FIELD = "invitationCode";
     private static final String INVITATION_CODES_ATTRIBUTE = "invitation_codes";
     private static final String USER_TYPE_ATTRIBUTE = "user_type";
-    private static final String SESSION_NOTE_GROUP_NAME = "invitation_code_group";
+    private static final String SESSION_NOTE_GROUP_NAMES = "invitation_code_groups";
 
     @Override
     public void buildPage(FormContext context, LoginFormsProvider form) {
@@ -83,8 +83,9 @@ public class InvitationCodeFormAction implements FormAction {
             return;
         }
 
-        // Store the group assignment for the success handler
-        context.getAuthenticationSession().setAuthNote(SESSION_NOTE_GROUP_NAME, codeConfig.getGroupName());
+        // Store the group assignments for the success handler
+        List<String> groups = codeConfig.getResolvedGroupNames();
+        context.getAuthenticationSession().setAuthNote(SESSION_NOTE_GROUP_NAMES, String.join(",", groups));
         context.success();
     }
 
@@ -92,19 +93,27 @@ public class InvitationCodeFormAction implements FormAction {
     public void success(FormContext context) {
         UserModel user = context.getUser();
 
-        // Get the group name from session notes
-        String groupName = context.getAuthenticationSession().getAuthNote(SESSION_NOTE_GROUP_NAME);
+        // Get the group names from session notes (comma-separated)
+        String groupNamesRaw = context.getAuthenticationSession().getAuthNote(SESSION_NOTE_GROUP_NAMES);
 
-        if (groupName != null && !groupName.isEmpty()) {
-            // Find and add user to the group
-            GroupModel group = context.getRealm().getGroupsStream()
-                    .filter(g -> g.getName().equals(groupName))
-                    .findFirst()
-                    .orElse(null);
+        if (groupNamesRaw != null && !groupNamesRaw.isEmpty()) {
+            List<String> assignedGroups = new ArrayList<>();
+            for (String rawName : groupNamesRaw.split(",")) {
+                String groupName = rawName.trim();
+                if (groupName.isEmpty()) continue;
 
-            if (group != null) {
-                user.joinGroup(group);
-                context.getEvent().detail("assigned_group", groupName);
+                GroupModel group = context.getRealm().getGroupsStream()
+                        .filter(g -> g.getName().equals(groupName))
+                        .findFirst()
+                        .orElse(null);
+
+                if (group != null) {
+                    user.joinGroup(group);
+                    assignedGroups.add(groupName);
+                }
+            }
+            if (!assignedGroups.isEmpty()) {
+                context.getEvent().detail("assigned_groups", String.join(",", assignedGroups));
             }
         }
 
@@ -146,13 +155,29 @@ public class InvitationCodeFormAction implements FormAction {
 
     /**
      * Configuration for an invitation code.
+     * Supports both "groupNames" (array) and legacy "groupName" (string).
      */
     public static class InvitationCodeConfig {
         private String groupName;
+        private List<String> groupNames;
         private boolean enabled;
         private String description;
 
         public InvitationCodeConfig() {
+        }
+
+        /**
+         * Returns the resolved list of group names.
+         * Prefers "groupNames" if set, falls back to "groupName" for backward compatibility.
+         */
+        public List<String> getResolvedGroupNames() {
+            if (groupNames != null && !groupNames.isEmpty()) {
+                return groupNames;
+            }
+            if (groupName != null && !groupName.isEmpty()) {
+                return List.of(groupName);
+            }
+            return List.of();
         }
 
         public String getGroupName() {
@@ -161,6 +186,14 @@ public class InvitationCodeFormAction implements FormAction {
 
         public void setGroupName(String groupName) {
             this.groupName = groupName;
+        }
+
+        public List<String> getGroupNames() {
+            return groupNames;
+        }
+
+        public void setGroupNames(List<String> groupNames) {
+            this.groupNames = groupNames;
         }
 
         public boolean isEnabled() {
