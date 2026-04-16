@@ -1,99 +1,377 @@
+/* Veda theme — matches dashboard.dev.veda.grss.cloud */
+
+:root {
+  --veda-primary: #00629b;
+  --veda-primary-hover: #004f7d;
+  --veda-primary-ring: rgba(0, 98, 155, 0.25);
+  --veda-bg: #f5f5f5;
+  --veda-card-bg: #ffffff;
+  --veda-foreground: #1a1a1a;
+  --veda-muted-fg: #717182;
+  --veda-border: rgba(0, 0, 0, 0.1);
+  --veda-input-bg: #f3f3f5;
+  --veda-destructive: #d4183d;
+  --veda-radius: 0.625rem;
+  --veda-font-family: 'Frutiger', 'Frutiger LT Std', 'Frutiger Linotype',
+    'Univers', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+html,
+body,
+input,
+button,
+select,
+textarea,
+label,
+a,
+span,
+div,
+h1,
+h2,
+h3 {
+  font-family: var(--veda-font-family);
+}
+
 .login-pf body {
-    background: #f5f5f5;
-    background-image: none;
+  background: var(--veda-bg);
+  color: var(--veda-foreground);
+  font-family: var(--veda-font-family);
 }
 
 .login-pf-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 24px;
 }
+
+/* ---------- Header (logo + realm display name) ---------- */
 
 #kc-header-wrapper {
-    font-size: 2.5em;
-    color: #333;
+  position: relative;
+  font-size: 1.875rem;
+  font-weight: 500;
+  color: var(--veda-foreground);
+  text-align: center;
+  padding: 0;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  text-shadow: none;
 }
+
+#kc-header-wrapper::before {
+  content: '';
+  display: block;
+  width: 120px;
+  height: 60px;
+  margin: 0 auto -8px;
+  background-image: url('../img/GRSS-lightmode-logo.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* ---------- Card ---------- */
 
 .card-pf {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-    width: 100%;
-    max-width: 400px;
-    border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 440px;
+  background: var(--veda-card-bg);
+  border: 1px solid var(--veda-border);
+  border-radius: var(--veda-radius);
+  padding: 32px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
-#kc-content {
-    width: 100%;
-    max-width: 500px;
-
+#kc-content,
+#kc-content-wrapper {
+  width: 100%;
 }
-/* IdP buttons - primary, prominent styling */
+
+#kc-page-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--veda-foreground);
+  text-align: center;
+  margin: 0 0 16px;
+}
+
+/* ---------- Form fields ---------- */
+
+label,
+.pf-c-form__label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--veda-foreground);
+}
+
+input[type='text'],
+input[type='email'],
+input[type='password'],
+input[type='tel'],
+.pf-c-form-control {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 0.9375rem;
+  font-family: var(--veda-font-family);
+  background: var(--veda-input-bg);
+  color: var(--veda-foreground);
+  border: 1px solid transparent;
+  border-radius: var(--veda-radius);
+  box-sizing: border-box;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+input[type='text']:focus,
+input[type='email']:focus,
+input[type='password']:focus,
+.pf-c-form-control:focus {
+  outline: none;
+  border-color: var(--veda-primary);
+  box-shadow: 0 0 0 3px var(--veda-primary-ring);
+}
+
+input[aria-invalid='true'] {
+  border-color: var(--veda-destructive);
+}
+
+.pf-c-form__group,
+.form-group {
+  margin-bottom: 16px;
+}
+
+[id^='input-error'],
+.kc-input-error-message {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.8125rem;
+  color: var(--veda-destructive);
+}
+
+/* ---------- Primary buttons ---------- */
+
+#kc-login,
+input[type='submit'].pf-c-button,
+.pf-c-button.pf-m-primary,
+.btn-primary {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  font-family: var(--veda-font-family);
+  background: var(--veda-primary);
+  color: #ffffff;
+  border: 1px solid var(--veda-primary);
+  border-radius: var(--veda-radius);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+#kc-login:hover,
+input[type='submit'].pf-c-button:hover,
+.pf-c-button.pf-m-primary:hover,
+.btn-primary:hover {
+  background: var(--veda-primary-hover);
+  border-color: var(--veda-primary-hover);
+}
+
+/* ---------- IdP / social provider buttons (outlined, primary action) ---------- */
+
 #kc-social-providers {
-    margin-bottom: 0;
-    padding-bottom: 0;
+  margin: 0;
+  padding: 0;
+  width: 100%;
 }
 
 #kc-social-providers ul {
-    padding: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#kc-social-providers li {
+  width: 100%;
 }
 
 #kc-social-providers li a {
-    font-size: 16px;
-    padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 0.9375rem;
+  font-weight: 400;
+  font-family: var(--veda-font-family);
+  color: var(--veda-foreground);
+  background: var(--veda-card-bg);
+  border: 1px solid var(--veda-border);
+  border-radius: var(--veda-radius);
+  text-decoration: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s, background 0.15s;
 }
 
-/* "Sign in as guest" toggle link */
+#kc-social-providers li a:hover {
+  border-color: var(--veda-primary);
+  background: #f9fbfd;
+}
+
+#kc-social-providers li a strong {
+  font-weight: 600;
+}
+
+/* ---------- "Sign in as guest" toggle ---------- */
+
 .kc-guest-toggle {
-    text-align: center;
-    margin-top: 24px;
+  text-align: center;
+  margin-top: 4px;
 }
 
 .kc-guest-toggle a {
-    color: #6c757d;
-    font-size: 14px;
-    text-decoration: none;
-    border-bottom: 1px dashed #adb5bd;
-    padding-bottom: 2px;
+  color: var(--veda-muted-fg);
+  font-size: 0.8125rem;
+  text-decoration: none;
+  border-bottom: 1px dashed var(--veda-border);
+  padding-bottom: 2px;
 }
 
 .kc-guest-toggle a:hover {
-    color: #495057;
-    border-bottom-color: #495057;
+  color: var(--veda-foreground);
+  border-bottom-color: var(--veda-foreground);
 }
 
-/* Divider in guest form */
+/* ---------- OR divider ---------- */
+
 .kc-form-divider {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 20px 0 20px 0;
-    color: #6c757d;
-    font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0;
+  color: var(--veda-muted-fg);
+  font-size: 0.75rem;
 }
 
 .kc-form-divider hr {
-    flex: 1;
-    border: none;
-    border-top: 1px solid #dee2e6;
-    margin: 0;
+  flex: 1;
+  border: none;
+  border-top: 1px solid var(--veda-border);
+  margin: 0;
 }
 
 .kc-form-divider span {
-    white-space: nowrap;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-weight: 500;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
 }
 
-/* Guest login form - secondary styling */
 .kc-form-secondary {
-    opacity: 0.85;
+  width: 100%;
 }
 
-.kc-form-secondary:focus-within {
-    opacity: 1;
+/* ---------- Footer / registration links ---------- */
+
+#kc-info,
+#kc-info-wrapper,
+#kc-registration,
+#kc-registration-container {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 0.875rem;
+  color: var(--veda-muted-fg);
+}
+
+#kc-registration a,
+#kc-info a {
+  color: var(--veda-primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+#kc-registration a:hover,
+#kc-info a:hover {
+  text-decoration: underline;
+}
+
+/* Forgot password / form options row */
+
+#kc-form-options {
+  display: flex;
+  align-items: center;
+}
+
+#kc-form-options a,
+.kc-form-options-wrapper a {
+  color: var(--veda-primary);
+  font-size: 0.8125rem;
+  text-decoration: none;
+}
+
+#kc-form-options a:hover,
+.kc-form-options-wrapper a:hover {
+  text-decoration: underline;
+}
+
+#kc-form-options .checkbox label {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--veda-foreground);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ---------- Password visibility toggle ---------- */
+
+.pf-c-input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+button[data-password-toggle] {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--veda-muted-fg);
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+button[data-password-toggle]:hover {
+  color: var(--veda-foreground);
+}
+
+/* ---------- Alerts ---------- */
+
+.alert-error,
+.pf-c-alert.pf-m-danger,
+.kc-feedback-text {
+  background: #fdecef;
+  border: 1px solid #f5b7c0;
+  color: #b3122e;
+  padding: 12px 14px;
+  border-radius: var(--veda-radius);
+  font-size: 0.875rem;
+}
+
+/* ---------- Required asterisk ---------- */
+
+.required {
+  color: var(--veda-destructive);
+  margin-left: 2px;
 }
