@@ -109,4 +109,4 @@ jobs:
           echo "Keycloak service is stable."
 
       - name: Apply Config
-        run: uv run bin/apply-config.py $CONFIG_LAMBDA_ARN $(echo '${{ toJSON(vars) }}' | jq -c .)
+        run: uv run bin/apply-config.py "$CONFIG_LAMBDA_ARN" "$(echo '${{ toJSON(vars) }}' | jq -c .)"
