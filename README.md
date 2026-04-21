@@ -1,6 +1,6 @@
 # VEDA Keycloak
 
-Keycloak deployment for the VEDA project, managed via AWS CDK (Python) and configured with [keycloak-config-cli](https://github.com/adorsys/keycloak-config-cli).
+Keycloak deployment for the GRSS VEDA project, managed via AWS CDK (Python) and configured with [keycloak-config-cli](https://github.com/adorsys/keycloak-config-cli).
 
 ## Project Structure
 
