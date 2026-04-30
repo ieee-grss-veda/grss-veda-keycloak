@@ -445,6 +445,43 @@ button[data-password-toggle]:hover {
   margin-left: 2px;
 }
 
+/* ---------- Verify email page ---------- */
+
+.kc-verify-email {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--veda-foreground);
+}
+
+.kc-verify-email p {
+  margin: 0;
+}
+
+.kc-verify-email__greeting {
+  font-weight: 500;
+}
+
+.kc-verify-email__resend {
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--veda-border);
+  font-size: 0.875rem;
+  color: var(--veda-muted-fg);
+}
+
+.kc-verify-email__resend a {
+  color: var(--veda-primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.kc-verify-email__resend a:hover {
+  text-decoration: underline;
+}
+
 /* ---------- Site footer ---------- */
 
 .veda-footer {
