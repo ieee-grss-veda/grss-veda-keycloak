@@ -18,7 +18,8 @@
 
   function ensureFavicon() {
     var existing = document.querySelectorAll('link[rel~="icon"]');
-    for (var i = 0; i < existing.length; i++) existing[i].parentNode.removeChild(existing[i]);
+    for (var i = 0; i < existing.length; i++)
+      existing[i].parentNode.removeChild(existing[i]);
 
     var iconUrl = resolveResourceUrl('img/favicon.ico');
     var head = document.head || document.getElementsByTagName('head')[0];
@@ -44,38 +45,14 @@
   ensureFavicon();
   setTitle();
 
+  var logoUrl = resolveResourceUrl('img/IEEE%20GRSS.jpg');
+
   var footerHtml = [
     '<footer class="veda-footer" role="contentinfo">',
     '  <div class="veda-footer__container">',
-    '    <div class="veda-footer__column veda-footer__column--logo">',
-    '      <img class="veda-footer__logo veda-footer__logo--grss"',
-    '           src="https://www.grss-ieee.org/wp-content/uploads/2020/11/grss-logo.png"',
-    '           srcset="https://www.grss-ieee.org/wp-content/uploads/2020/11/grss-logo.png 300w, https://www.grss-ieee.org/wp-content/uploads/2020/11/grss-logo.png 347w"',
-    '           sizes="(max-width: 300px) 100vw, 300px"',
-    '           width="300" height="198" alt="GRSS IEEE">',
-    '    </div>',
-    '    <div class="veda-footer__column veda-footer__column--center">',
-    '      <nav class="veda-footer__nav" aria-label="Footer">',
-    '        <ul class="veda-footer__menu">',
-    '          <li><a href="https://www.grss-ieee.org/">Home</a></li>',
-    '          <li><a href="http://www.ieee.org/sitemap.html">Sitemap/More Sites</a></li>',
-    '          <li><a href="https://www.grss-ieee.org/contact-us/">Contact</a></li>',
-    '          <li><a href="https://www.ieee.org/accessibility-statement.html" target="_blank" rel="noopener">Accessibility</a></li>',
-    '          <li><a href="http://www.ieee.org/accessibility_statement.html" target="_blank" rel="noopener">Nondiscrimination Policy</a></li>',
-    '          <li><a href="http://ieee-ethics-reporting.org/">IEEE Ethics Reporting</a></li>',
-    '          <li><a href="http://www.ieee.org/security_privacy.html" target="_blank" rel="noopener">IEEE Privacy Policy</a></li>',
-    '          <li><a href="https://www.ieee.org/about/help/site-terms-conditions.html" target="_blank" rel="noopener">Terms &amp; Disclosures</a></li>',
-    '        </ul>',
-    '      </nav>',
-    '      <p class="veda-footer__copy">© Copyright 2025 IEEE – All rights reserved. A public charity, IEEE is the world’s largest technical professional organization dedicated to advancing technology for the benefit of humanity.</p>',
-    '    </div>',
-    '    <div class="veda-footer__column veda-footer__column--logo veda-footer__column--right">',
-    '      <img class="veda-footer__logo veda-footer__logo--ieee"',
-    '           src="https://www.grss-ieee.org/wp-content/uploads/2020/11/ieee-logo.png"',
-    '           srcset="https://www.grss-ieee.org/wp-content/uploads/2020/11/ieee-logo.png 300w, https://www.grss-ieee.org/wp-content/uploads/2020/11/ieee-logo.png 325w"',
-    '           sizes="(max-width: 300px) 100vw, 300px"',
-    '           width="300" height="105" alt="">',
-    '    </div>',
+    '    <img class="veda-footer__logo" src="' + logoUrl + '" alt="IEEE GRSS">',
+    '    <p class="veda-footer__copy">© Copyright 2025 IEEE – All rights reserved. A public charity, IEEE is the world’s largest technical professional organization dedicated to advancing technology for the benefit of humanity.</p>',
+
     '  </div>',
     '</footer>',
   ].join('\n');

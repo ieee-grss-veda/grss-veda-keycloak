@@ -69,49 +69,19 @@
             </td>
         </tr>
 
-        <#-- ===== Footer (mirrors footer.js output) ===== -->
+        <#-- ===== Footer ===== -->
         <tr>
             <td align="center" bgcolor="#ffffff"
-                style="background:#ffffff;border-top:1px solid rgba(0,0,0,0.1);padding:32px 24px;font-family:'Frutiger','Frutiger LT Std','Helvetica Neue',Helvetica,Arial,sans-serif;color:#1a1a1a;">
-                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:1100px;">
+                style="background:#ffffff;border-top:1px solid rgba(0,0,0,0.1);padding:24px;font-family:'Frutiger','Frutiger LT Std','Helvetica Neue',Helvetica,Arial,sans-serif;color:#1a1a1a;">
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="max-width:600px;">
                     <tr>
-                        <#-- Left column: GRSS logo -->
-                        <td align="left" valign="middle" width="20%" style="padding:12px;">
-                            <img src="https://www.grss-ieee.org/wp-content/uploads/2020/11/grss-logo.png"
-                                 width="150" height="99" alt="GRSS IEEE"
-                                 style="display:block;border:0;outline:none;text-decoration:none;height:auto;max-width:150px;">
+                        <td valign="middle" style="padding-right:16px;">
+                            <img src="${url.resourcesUrl}/img/IEEE%20GRSS.jpg"
+                                 width="120" height="32" alt="IEEE GRSS"
+                                 style="display:block;border:0;outline:none;text-decoration:none;height:auto;max-width:120px;">
                         </td>
-
-                        <#-- Center column: nav + copyright -->
-                        <td align="center" valign="middle" width="60%" style="padding:12px;">
-                            <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
-                                <tr>
-                                    <td align="center" style="font-size:13px;line-height:1.9;color:#1a1a1a;">
-                                        <a href="https://www.grss-ieee.org/" style="color:#1a1a1a;text-decoration:none;font-weight:500;margin:0 8px;">Home</a>
-                                        <a href="http://www.ieee.org/sitemap.html" style="color:#1a1a1a;text-decoration:none;font-weight:500;margin:0 8px;">Sitemap/More Sites</a>
-                                        <a href="https://www.grss-ieee.org/contact-us/" style="color:#1a1a1a;text-decoration:none;font-weight:500;margin:0 8px;">Contact</a>
-                                        <a href="https://www.ieee.org/accessibility-statement.html" style="color:#1a1a1a;text-decoration:none;font-weight:500;margin:0 8px;">Accessibility</a>
-                                        <a href="http://www.ieee.org/accessibility_statement.html" style="color:#1a1a1a;text-decoration:none;font-weight:500;margin:0 8px;">Nondiscrimination Policy</a>
-                                        <a href="http://ieee-ethics-reporting.org/" style="color:#1a1a1a;text-decoration:none;font-weight:500;margin:0 8px;">IEEE Ethics Reporting</a>
-                                        <a href="http://www.ieee.org/security_privacy.html" style="color:#1a1a1a;text-decoration:none;font-weight:500;margin:0 8px;">IEEE Privacy Policy</a>
-                                        <a href="https://www.ieee.org/about/help/site-terms-conditions.html" style="color:#1a1a1a;text-decoration:none;font-weight:500;margin:0 8px;">Terms &amp; Disclosures</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td align="center" style="padding-top:12px;">
-                                        <p style="margin:0;font-size:12px;line-height:1.5;color:#717182;max-width:540px;">
-                                            &copy; Copyright 2025 IEEE &ndash; All rights reserved. A public charity, IEEE is the world&rsquo;s largest technical professional organization dedicated to advancing technology for the benefit of humanity.
-                                        </p>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-
-                        <#-- Right column: IEEE logo -->
-                        <td align="right" valign="middle" width="20%" style="padding:12px;">
-                            <img src="https://www.grss-ieee.org/wp-content/uploads/2020/11/ieee-logo.png"
-                                 width="150" height="53" alt=""
-                                 style="display:block;border:0;outline:none;text-decoration:none;height:auto;max-width:150px;margin-left:auto;">
+                        <td valign="middle" style="font-size:10px;line-height:1.5;color:#717182;text-align:left;">
+                            &copy; Copyright 2025 IEEE &ndash; All rights reserved. A public charity, IEEE is the world&rsquo;s largest technical professional organization dedicated to advancing technology for the benefit of humanity.
                         </td>
                     </tr>
                 </table>
