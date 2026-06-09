@@ -34,7 +34,7 @@
                                 Hi ${(user.email)!''},
                             </p>
                             <p style="margin:0 0 24px;font-size:15px;line-height:1.5;color:#1a1a1a;">
-                                Someone has created a ${realmName} account with this email address. If this was you, click the button below to verify your email address.
+                                An account, ${realmName}, has been created with this email address. If this was you, click the button below to verify your email address.
                             </p>
 
                             <#-- CTA button -->
