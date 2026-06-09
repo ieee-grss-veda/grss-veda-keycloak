@@ -6,6 +6,7 @@ realm: veda
 displayName: Applications
 displayNameHtml: GRSS VEDA Ecosystem
 loginTheme: veda
+emailTheme: veda
 
 # Enable guest user registration
 registrationAllowed: true
@@ -43,7 +44,7 @@ clients:
     standardFlowEnabled: true
     fullScopeAllowed: true
     attributes:
-      post.logout.redirect.uris: "+"
+      post.logout.redirect.uris: '+'
     redirectUris:
       - $(env:ACCOUNT_CONSOLE_URL)/*
     webOrigins:
@@ -61,11 +62,11 @@ clients:
     publicClient: true
     alwaysDisplayInConsole: true
     attributes:
-      post.logout.redirect.uris: "+"
+      post.logout.redirect.uris: '+'
     redirectUris:
       - $(env:STAC_CLIENT_URL)/*
     webOrigins:
-      - "+"
+      - '+'
     protocol: openid-connect
     fullScopeAllowed: true
     defaultClientScopes:
@@ -110,12 +111,12 @@ clients:
     publicClient: true
     alwaysDisplayInConsole: true
     attributes:
-      "access.token.lifespan": "3600"
-      post.logout.redirect.uris: "+"
+      'access.token.lifespan': '3600'
+      post.logout.redirect.uris: '+'
     redirectUris:
       - $(env:INGEST_API_CLIENT_URL)/*
     webOrigins:
-      - "+"
+      - '+'
     protocol: openid-connect
     fullScopeAllowed: true
     defaultClientScopes:
@@ -161,7 +162,7 @@ clients:
     publicClient: false
     alwaysDisplayInConsole: true
     attributes:
-      post.logout.redirect.uris: "+"
+      post.logout.redirect.uris: '+'
     redirectUris:
       - $(env:INGEST_UI_CLIENT_URL)/*
     webOrigins:
@@ -186,7 +187,7 @@ clients:
     publicClient: false
     alwaysDisplayInConsole: true
     attributes:
-      post.logout.redirect.uris: "+"
+      post.logout.redirect.uris: '+'
     redirectUris:
       - $(env:AIRFLOW_CLIENT_URL)/*
     webOrigins:
@@ -234,30 +235,30 @@ clients:
           user.attribute: username
           claim.name: preferred_username
           jsonType.label: String
-          id.token.claim: "true"
-          access.token.claim: "true"
-          userinfo.token.claim: "true"
+          id.token.claim: 'true'
+          access.token.claim: 'true'
+          userinfo.token.claim: 'true'
       - name: groups
         protocol: openid-connect
         protocolMapper: oidc-group-membership-mapper
         config:
-          full.path: "false"
-          id.token.claim: "true"
-          access.token.claim: "true"
+          full.path: 'false'
+          id.token.claim: 'true'
+          access.token.claim: 'true'
           claim.name: groups
-          userinfo.token.claim: "true"
+          userinfo.token.claim: 'true'
       - name: client-roles-claim
         protocol: openid-connect
         protocolMapper: oidc-usermodel-client-role-mapper
         config:
-          access.token.claim: "true"
-          userinfo.token.claim: "true"
-          id.token.claim: "true"
+          access.token.claim: 'true'
+          userinfo.token.claim: 'true'
+          id.token.claim: 'true'
           claim.name: roles
           jsonType.label: String
-          multivalued: "true"
+          multivalued: 'true'
           usermodel.clientRoleMapping.clientId: jupyterhub
-          usermodel.clientRoleMapping.rolePrefix: ""
+          usermodel.clientRoleMapping.rolePrefix: ''
 
   - clientId: monitoring
     name: VEDA Monitoring
@@ -270,7 +271,7 @@ clients:
     redirectUris:
       - $(env:MONITORING_CLIENT_URL)/*
     webOrigins:
-      - "+"
+      - '+'
     protocol: openid-connect
     fullScopeAllowed: true
     defaultClientScopes:
@@ -327,8 +328,6 @@ roles:
         description: Editor role for managing monitoring
       - name: Viewer
         description: Viewer role for basic access to monitoring
-
-
 
 clientScopeMappings:
   stac:
@@ -416,19 +415,19 @@ clientScopes:
     description: Group membership information
     protocol: openid-connect
     attributes:
-      include.in.token.scope: "true"
-      display.on.consent.screen: "true"
+      include.in.token.scope: 'true'
+      display.on.consent.screen: 'true'
     protocolMappers:
       - name: groups
         protocol: openid-connect
         protocolMapper: oidc-group-membership-mapper
         consentRequired: false
         config:
-          full.path: "false"
-          id.token.claim: "true"
-          access.token.claim: "true"
+          full.path: 'false'
+          id.token.claim: 'true'
+          access.token.claim: 'true'
           claim.name: groups
-          userinfo.token.claim: "true"
+          userinfo.token.claim: 'true'
 
 # Custom registration flow with invitation code validation
 authenticationFlows:
@@ -546,7 +545,7 @@ groups:
     clientRoles:
       veda-airflow:
         - Launcher
-  
+
   - name: JupyterHub Admin
     clientRoles:
       jupyterhub:
@@ -612,11 +611,11 @@ users:
     serviceAccountClientId: airflow-stac-etl
     clientRoles:
       stac:
-      - Admin
+        - Admin
   - username: service-account-airflow-ingest-api-etl
     emailVerified: true
     enabled: true
     serviceAccountClientId: airflow-ingest-api-etl
     clientRoles:
       ingest-api:
-      - Admin
+        - Admin

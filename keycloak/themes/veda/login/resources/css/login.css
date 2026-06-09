@@ -2,9 +2,16 @@
 
 :root {
   --veda-primary: #00629b;
+  --veda-primary-rgb: 0, 98, 155;
   --veda-primary-hover: #004f7d;
   --veda-primary-ring: rgba(0, 98, 155, 0.25);
   --veda-bg: #f5f5f5;
+  --veda-page-gradient: linear-gradient(
+    to top left,
+    rgba(var(--veda-primary-rgb), 0.05) 0%,
+    var(--veda-bg) 20%,
+    rgba(var(--veda-primary-rgb), 0.1) 100%
+  );
   --veda-card-bg: #ffffff;
   --veda-foreground: #1a1a1a;
   --veda-muted-fg: #717182;
@@ -32,20 +39,30 @@ h3 {
   font-family: var(--veda-font-family);
 }
 
+.login-pf {
+  background: none;
+}
 .login-pf body {
-  background: var(--veda-bg);
+  background: var(--veda-page-gradient), var(--veda-bg);
+  background-attachment: fixed;
   color: var(--veda-foreground);
   font-family: var(--veda-font-family);
+  display: flex;
+  flex-direction: column;
+  gap: 100px;
 }
 
 .login-pf-page {
+  flex: 1;
   display: flex;
-  justify-content: center;
   align-items: center;
   flex-direction: column;
-  min-height: 100vh;
   padding: 24px;
 }
+
+/* body.veda-has-footer .login-pf-page {
+  min-height: 100vh;
+} */
 
 /* ---------- Header (logo + realm display name) ---------- */
 
@@ -64,9 +81,8 @@ h3 {
 #kc-header-wrapper::before {
   content: '';
   display: block;
-  width: 120px;
-  height: 60px;
-  margin: 0 auto -8px;
+  height: 150px;
+  margin: 0 auto 10px;
   background-image: url('../img/GRSS-lightmode-logo.png');
   background-repeat: no-repeat;
   background-position: center;
@@ -127,6 +143,10 @@ input[type='tel'],
   border-radius: var(--veda-radius);
   box-sizing: border-box;
   transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.pf-c-form-control[aria-invalid='true'] {
+  background-image: none;
 }
 
 input[type='text']:focus,
@@ -358,15 +378,68 @@ button[data-password-toggle]:hover {
 
 /* ---------- Alerts ---------- */
 
-.alert-error,
-.pf-c-alert.pf-m-danger,
-.kc-feedback-text {
-  background: #fdecef;
-  border: 1px solid #f5b7c0;
-  color: #b3122e;
+.alert,
+.pf-c-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
   padding: 12px 14px;
+  border: 1px solid transparent;
   border-radius: var(--veda-radius);
   font-size: 0.875rem;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+}
+
+.alert .pf-c-alert__icon,
+.pf-c-alert .pf-c-alert__icon,
+.alert > span[class*='kcFeedback'],
+.alert > .pficon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.kc-feedback-text,
+.pf-c-alert__title {
+  flex: 1;
+  line-height: 1.4;
+  color: inherit;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-weight: 400;
+}
+
+.alert-error,
+.pf-c-alert.pf-m-danger {
+  background: #fdecef;
+  border-color: #f5b7c0;
+  color: #b3122e;
+}
+
+.alert-warning,
+.pf-c-alert.pf-m-warning {
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #9a3412;
+}
+
+.alert-success,
+.pf-c-alert.pf-m-success {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #047857;
+}
+
+.alert-info,
+.pf-c-alert.pf-m-info {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1e40af;
 }
 
 /* ---------- Required asterisk ---------- */
@@ -374,4 +447,77 @@ button[data-password-toggle]:hover {
 .required {
   color: var(--veda-destructive);
   margin-left: 2px;
+}
+
+/* ---------- Verify email page ---------- */
+
+.kc-verify-email {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--veda-foreground);
+}
+
+.kc-verify-email p {
+  margin: 0;
+}
+
+.kc-verify-email__greeting {
+  font-weight: 500;
+}
+
+.kc-verify-email__resend {
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--veda-border);
+  font-size: 0.875rem;
+  color: var(--veda-muted-fg);
+}
+
+.kc-verify-email__resend a {
+  color: var(--veda-primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.kc-verify-email__resend a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Site footer ---------- */
+
+.veda-footer {
+  width: 100%;
+  background: var(--veda-card-bg);
+  border-top: 1px solid var(--veda-border);
+  font-family: var(--veda-font-family);
+  color: var(--veda-foreground);
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.veda-footer__container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  justify-content: center;
+}
+
+.veda-footer__copy {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--veda-muted-fg);
+  max-width: 540px;
+}
+
+.veda-footer__logo {
+  display: block;
+  height: auto;
+  width: 100%;
+  max-width: 120px;
 }
