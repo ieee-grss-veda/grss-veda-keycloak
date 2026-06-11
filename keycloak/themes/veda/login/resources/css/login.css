@@ -119,6 +119,14 @@ h3 {
   width: 100%;
 }
 
+/* Keycloak renders the global alert as the first child of #kc-content-wrapper,
+   i.e. between the title and the nested form (which holds our subtitle). Make
+   this a flex column so the subtitle can be ordered above the alert. */
+#kc-content-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
 .login-pf-header {
   margin: 0;
 }
@@ -136,7 +144,8 @@ h3 {
    line-height) so it reads as a pair with the title, while the bottom
    margin gives clear separation before the form. */
 .kc-subtitle {
-  margin: -20px 0 16px;
+  order: -1; /* sit directly under the title, above any global alert */
+  margin: -20px 0 20px;
   text-align: center;
   color: var(--veda-muted-fg);
   font-size: 0.875rem;
