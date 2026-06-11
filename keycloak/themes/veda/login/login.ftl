@@ -3,6 +3,7 @@
     <#if section = "header">
         ${msg("loginAccountTitle")}
     <#elseif section = "form">
+        <p class="kc-subtitle">${msg("loginSubtitle")}</p>
         <div id="kc-form">
             <#-- IdP / Social login buttons (PRIMARY) -->
             <#if social?? && social.providers?has_content>

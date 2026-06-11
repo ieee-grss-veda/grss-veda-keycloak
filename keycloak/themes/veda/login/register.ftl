@@ -3,10 +3,12 @@
     <#if section = "header">
         ${msg("registerTitle")}
     <#elseif section = "form">
+        <p class="kc-subtitle">${kcSanitize(msg("registerPreamble"))?no_esc}</p>
         <form id="kc-register-form" class="${properties.kcFormClass!}" action="${url.registrationAction}" method="post">
+            <div class="kc-form-row">
             <div class="${properties.kcFormGroupClass!}">
                 <div class="${properties.kcLabelWrapperClass!}">
-                    <label for="firstName" class="${properties.kcLabelClass!}">${msg("firstName")}</label>
+                    <label for="firstName" class="${properties.kcLabelClass!}">${msg("firstName")} <span class="required">*</span></label>
                 </div>
                 <div class="${properties.kcInputWrapperClass!}">
                     <input type="text" id="firstName" class="${properties.kcInputClass!}" name="firstName"
@@ -24,7 +26,7 @@
 
             <div class="${properties.kcFormGroupClass!}">
                 <div class="${properties.kcLabelWrapperClass!}">
-                    <label for="lastName" class="${properties.kcLabelClass!}">${msg("lastName")}</label>
+                    <label for="lastName" class="${properties.kcLabelClass!}">${msg("lastName")} <span class="required">*</span></label>
                 </div>
                 <div class="${properties.kcInputWrapperClass!}">
                     <input type="text" id="lastName" class="${properties.kcInputClass!}" name="lastName"
@@ -39,10 +41,11 @@
                     </#if>
                 </div>
             </div>
+            </div>
 
             <div class="${properties.kcFormGroupClass!}">
                 <div class="${properties.kcLabelWrapperClass!}">
-                    <label for="email" class="${properties.kcLabelClass!}">${msg("email")}</label>
+                    <label for="email" class="${properties.kcLabelClass!}">${msg("email")} <span class="required">*</span></label>
                 </div>
                 <div class="${properties.kcInputWrapperClass!}">
                     <input type="text" id="email" class="${properties.kcInputClass!}" name="email"
@@ -61,7 +64,7 @@
             <#if !realm.registrationEmailAsUsername>
                 <div class="${properties.kcFormGroupClass!}">
                     <div class="${properties.kcLabelWrapperClass!}">
-                        <label for="username" class="${properties.kcLabelClass!}">${msg("username")}</label>
+                        <label for="username" class="${properties.kcLabelClass!}">${msg("username")} <span class="required">*</span></label>
                     </div>
                     <div class="${properties.kcInputWrapperClass!}">
                         <input type="text" id="username" class="${properties.kcInputClass!}" name="username"
@@ -100,15 +103,24 @@
             </div>
 
             <#if passwordRequired??>
+                <div class="kc-form-row">
                 <div class="${properties.kcFormGroupClass!}">
                     <div class="${properties.kcLabelWrapperClass!}">
-                        <label for="password" class="${properties.kcLabelClass!}">${msg("password")}</label>
+                        <label for="password" class="${properties.kcLabelClass!}">${msg("password")} <span class="required">*</span></label>
                     </div>
                     <div class="${properties.kcInputWrapperClass!}">
-                        <input type="password" id="password" class="${properties.kcInputClass!}" name="password"
-                               autocomplete="new-password"
-                               aria-invalid="<#if messagesPerField.existsError('password','password-confirm')>true</#if>"
-                        />
+                        <div class="${properties.kcInputGroup!}" dir="ltr">
+                            <input type="password" id="password" class="${properties.kcInputClass!}" name="password"
+                                   autocomplete="new-password"
+                                   aria-invalid="<#if messagesPerField.existsError('password','password-confirm')>true</#if>"
+                            />
+                            <button class="${properties.kcFormPasswordVisibilityButtonClass!}" type="button" aria-label="${msg('showPassword')}"
+                                    aria-controls="password" data-password-toggle tabindex="-1"
+                                    data-icon-show="${properties.kcFormPasswordVisibilityIconShow!}" data-icon-hide="${properties.kcFormPasswordVisibilityIconHide!}"
+                                    data-label-show="${msg('showPassword')}" data-label-hide="${msg('hidePassword')}">
+                                <i class="${properties.kcFormPasswordVisibilityIconShow!}" aria-hidden="true"></i>
+                            </button>
+                        </div>
 
                         <#if messagesPerField.existsError('password')>
                             <span id="input-error-password" class="${properties.kcInputErrorMessageClass!}" aria-live="polite">
@@ -121,13 +133,21 @@
                 <div class="${properties.kcFormGroupClass!}">
                     <div class="${properties.kcLabelWrapperClass!}">
                         <label for="password-confirm"
-                               class="${properties.kcLabelClass!}">${msg("passwordConfirm")}</label>
+                               class="${properties.kcLabelClass!}">${msg("passwordConfirm")} <span class="required">*</span></label>
                     </div>
                     <div class="${properties.kcInputWrapperClass!}">
-                        <input type="password" id="password-confirm" class="${properties.kcInputClass!}"
-                               name="password-confirm"
-                               aria-invalid="<#if messagesPerField.existsError('password-confirm')>true</#if>"
-                        />
+                        <div class="${properties.kcInputGroup!}" dir="ltr">
+                            <input type="password" id="password-confirm" class="${properties.kcInputClass!}"
+                                   name="password-confirm"
+                                   aria-invalid="<#if messagesPerField.existsError('password-confirm')>true</#if>"
+                            />
+                            <button class="${properties.kcFormPasswordVisibilityButtonClass!}" type="button" aria-label="${msg('showPassword')}"
+                                    aria-controls="password-confirm" data-password-toggle tabindex="-1"
+                                    data-icon-show="${properties.kcFormPasswordVisibilityIconShow!}" data-icon-hide="${properties.kcFormPasswordVisibilityIconHide!}"
+                                    data-label-show="${msg('showPassword')}" data-label-hide="${msg('hidePassword')}">
+                                <i class="${properties.kcFormPasswordVisibilityIconShow!}" aria-hidden="true"></i>
+                            </button>
+                        </div>
 
                         <#if messagesPerField.existsError('password-confirm')>
                             <span id="input-error-password-confirm" class="${properties.kcInputErrorMessageClass!}" aria-live="polite">
@@ -135,6 +155,7 @@
                             </span>
                         </#if>
                     </div>
+                </div>
                 </div>
             </#if>
 
@@ -158,5 +179,6 @@
                 </div>
             </div>
         </form>
+        <script type="module" src="${url.resourcesPath}/js/passwordVisibility.js"></script>
     </#if>
 </@layout.registrationLayout>

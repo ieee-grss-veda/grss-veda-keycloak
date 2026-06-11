@@ -13,7 +13,7 @@
     rgba(var(--veda-primary-rgb), 0.1) 100%
   );
   --veda-card-bg: #ffffff;
-  --veda-foreground: #1a1a1a;
+  --veda-foreground: #1f2937;
   --veda-muted-fg: #717182;
   --veda-border: rgba(0, 0, 0, 0.1);
   --veda-input-bg: #f3f3f5;
@@ -43,19 +43,31 @@ h3 {
   background: none;
 }
 .login-pf body {
-  background: var(--veda-page-gradient), var(--veda-bg);
-  background-attachment: fixed;
+  /* Dashboard-matched background texture under a white veil for legibility.
+     Veil opacity is the tuning knob — higher = fainter texture. */
+  background-image:
+    linear-gradient(
+      rgba(245, 245, 245, 0.85),
+      rgba(245, 245, 245, 0.93)
+    ),
+    url('../img/bg-texture.jpg');
+  background-position: center, center;
+  background-size: cover, cover;
+  background-repeat: no-repeat, no-repeat;
+  background-attachment: fixed, fixed;
+  background-color: var(--veda-bg);
   color: var(--veda-foreground);
   font-family: var(--veda-font-family);
   display: flex;
   flex-direction: column;
-  gap: 100px;
+  min-height: 100vh;
 }
 
 .login-pf-page {
   flex: 1;
   display: flex;
   align-items: center;
+  justify-content: center;
   flex-direction: column;
   padding: 24px;
 }
@@ -64,25 +76,23 @@ h3 {
   min-height: 100vh;
 } */
 
-/* ---------- Header (logo + realm display name) ---------- */
+/* ---------- Header (logo inside card) ---------- */
 
-#kc-header-wrapper {
-  position: relative;
-  font-size: 1.875rem;
-  font-weight: 500;
-  color: var(--veda-foreground);
-  text-align: center;
-  padding: 0;
-  letter-spacing: 0.01em;
-  text-transform: none;
-  text-shadow: none;
+/* The realm-name header renders outside the card, directly on the textured
+   background, where the logo PNG's transparent areas pick up the busy
+   texture. Hide it and render the logo inside the card on clean white. */
+#kc-header {
+  display: none;
 }
 
-#kc-header-wrapper::before {
+.login-pf-header::before {
   content: '';
   display: block;
-  height: 150px;
-  margin: 0 auto 10px;
+  width: 110px;
+  height: 110px;
+  margin: 0 auto 8px;
+  /* explicit width needed: .login-pf-header is a flex column, so a
+     content-less ::before would otherwise collapse to zero width */
   background-image: url('../img/GRSS-lightmode-logo.png');
   background-repeat: no-repeat;
   background-position: center;
@@ -101,7 +111,7 @@ h3 {
   border: 1px solid var(--veda-border);
   border-radius: var(--veda-radius);
   padding: 32px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 8px 30px rgba(0, 0, 0, 0.12);
 }
 
 #kc-content,
@@ -109,12 +119,28 @@ h3 {
   width: 100%;
 }
 
+.login-pf-header {
+  margin: 0;
+}
+
 #kc-page-title {
   font-size: 1.5rem;
   font-weight: 500;
   color: var(--veda-foreground);
   text-align: center;
-  margin: 0 0 16px;
+  margin: 0;
+}
+
+/* Supporting line under the page title. The negative top margin pulls it
+   tight to the title (overcoming the card's 16px flex gap + the h1's
+   line-height) so it reads as a pair with the title, while the bottom
+   margin gives clear separation before the form. */
+.kc-subtitle {
+  margin: -20px 0 16px;
+  text-align: center;
+  color: var(--veda-muted-fg);
+  font-size: 0.875rem;
+  line-height: 1.5;
 }
 
 /* ---------- Form fields ---------- */
@@ -139,7 +165,7 @@ input[type='tel'],
   font-family: var(--veda-font-family);
   background: var(--veda-input-bg);
   color: var(--veda-foreground);
-  border: 1px solid transparent;
+  border: 1px solid var(--veda-border);
   border-radius: var(--veda-radius);
   box-sizing: border-box;
   transition: border-color 0.15s, box-shadow 0.15s;
@@ -165,6 +191,25 @@ input[aria-invalid='true'] {
 .pf-c-form__group,
 .form-group {
   margin-bottom: 16px;
+}
+
+/* Two-column rows (e.g. first/last name, password/confirm on register) */
+.kc-form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.kc-form-row > .form-group,
+.kc-form-row > .pf-c-form__group {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+@media (max-width: 420px) {
+  .kc-form-row {
+    flex-direction: column;
+    gap: 0;
+  }
 }
 
 [id^='input-error'],
@@ -360,20 +405,42 @@ input[type='submit'].pf-c-button:hover,
   align-items: center;
 }
 
-button[data-password-toggle] {
+/* Keep typed text clear of the toggle icon */
+.pf-c-input-group input[type='password'],
+.pf-c-input-group input[type='text'] {
+  padding-right: 42px;
+}
+
+/* Selector is intentionally more specific than PatternFly's
+   `.pf-c-button.pf-m-control` so the toggle blends into the field
+   instead of rendering as a white control chip. */
+.pf-c-input-group button[data-password-toggle],
+.pf-c-input-group button[data-password-toggle]:hover,
+.pf-c-input-group button[data-password-toggle]:focus {
   position: absolute;
-  right: 8px;
+  right: 6px;
   top: 50%;
   transform: translateY(-50%);
+  /* PatternFly lifts the focused .pf-c-form-control to z-index:100, which
+     would otherwise paint the field over this overlaid toggle and hide the
+     eye while typing. Sit above it. */
+  z-index: 101;
   background: transparent;
   border: none;
+  box-shadow: none;
   color: var(--veda-muted-fg);
   cursor: pointer;
   padding: 4px 8px;
 }
 
-button[data-password-toggle]:hover {
+.pf-c-input-group button[data-password-toggle]:hover {
   color: var(--veda-foreground);
+}
+
+.pf-c-input-group button[data-password-toggle]:focus-visible {
+  outline: 2px solid var(--veda-primary-ring);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 /* ---------- Alerts ---------- */
@@ -490,6 +557,7 @@ button[data-password-toggle]:hover {
 
 .veda-footer {
   width: 100%;
+  flex-shrink: 0;
   background: var(--veda-card-bg);
   border-top: 1px solid var(--veda-border);
   font-family: var(--veda-font-family);
