@@ -82,11 +82,31 @@ jobs:
           RDS_INSTANCE_CLASS: ${{ vars.RDS_INSTANCE_CLASS }}
           RDS_INSTANCE_SIZE: ${{ vars.RDS_INSTANCE_SIZE }}
           ECS_HEALTH_CHECK_GRACE_PERIOD: ${{ vars.ECS_HEALTH_CHECK_GRACE_PERIOD }}
+          # SMTP settings for email verification
+          SMTP_HOST: ${{ vars.SMTP_HOST }}
+          SMTP_PORT: ${{ vars.SMTP_PORT }}
+          SMTP_FROM: ${{ vars.SMTP_FROM }}
+          SMTP_FROM_DISPLAY_NAME: ${{ vars.SMTP_FROM_DISPLAY_NAME }}
+          SMTP_REPLY_TO: ${{ vars.SMTP_REPLY_TO }}
+          SMTP_SSL: ${{ vars.SMTP_SSL }}
+          SMTP_STARTTLS: ${{ vars.SMTP_STARTTLS }}
+          SMTP_AUTH: ${{ vars.SMTP_AUTH }}
+          SMTP_USER: ${{ vars.SMTP_USER }}
+          SMTP_PASSWORD: ${{ vars.SMTP_PASSWORD }}
 
-      - name: Get ConfigLambdaArn from CloudFormation
-        id: get-lambda-arn
+      - name: Get outputs from CloudFormation
+        id: get-outputs
         run: |
-          echo "CONFIG_LAMBDA_ARN=$(jq -r '."veda-keycloak-${{ inputs.environment }}".ConfigLambdaArn' outputs.json)" >> $GITHUB_ENV
+          STACK_KEY="veda-keycloak-${{ inputs.environment }}"
+          echo "CONFIG_LAMBDA_ARN=$(jq -r ".\"$STACK_KEY\".ConfigLambdaArn" outputs.json)" >> $GITHUB_ENV
+          echo "CLUSTER_NAME=$(jq -r ".\"$STACK_KEY\".ClusterName" outputs.json)" >> $GITHUB_ENV
+          echo "SERVICE_NAME=$(jq -r ".\"$STACK_KEY\".ServiceName" outputs.json)" >> $GITHUB_ENV
+
+      - name: Wait for Keycloak service to stabilize
+        run: |
+          echo "Waiting for ECS service $SERVICE_NAME in cluster $CLUSTER_NAME to stabilize..."
+          aws ecs wait services-stable --cluster "$CLUSTER_NAME" --services "$SERVICE_NAME"
+          echo "Keycloak service is stable."
 
       - name: Apply Config
-        run: uv run bin/apply-config.py $CONFIG_LAMBDA_ARN $(echo '${{ toJSON(vars) }}' | jq -c .)
+        run: uv run bin/apply-config.py "$CONFIG_LAMBDA_ARN" "$(echo '${{ toJSON(vars) }}' | jq -c .)"

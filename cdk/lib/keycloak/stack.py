@@ -39,6 +39,16 @@ class KeycloakStack(Stack):
         ecs_health_check_grace_period: int = 180,
         rds_instance_class: str = "BURSTABLE4_GRAVITON",
         rds_instance_size: str = "SMALL",
+        smtp_host: Optional[str] = None,
+        smtp_port: str = "587",
+        smtp_from: Optional[str] = None,
+        smtp_from_display_name: str = "GRSS VEDA",
+        smtp_reply_to: str = "",
+        smtp_ssl: str = "false",
+        smtp_starttls: str = "true",
+        smtp_auth: str = "true",
+        smtp_user: str = "",
+        smtp_password: str = "",
         **kwargs,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
@@ -92,6 +102,16 @@ class KeycloakStack(Stack):
             version=keycloak_config_cli_version,
             stage=stage,
             saml_secrets=saml_secrets,
+            smtp_host=smtp_host,
+            smtp_port=smtp_port,
+            smtp_from=smtp_from,
+            smtp_from_display_name=smtp_from_display_name,
+            smtp_reply_to=smtp_reply_to,
+            smtp_ssl=smtp_ssl,
+            smtp_starttls=smtp_starttls,
+            smtp_auth=smtp_auth,
+            smtp_user=smtp_user,
+            smtp_password=smtp_password,
         )
 
         if configure_route53:

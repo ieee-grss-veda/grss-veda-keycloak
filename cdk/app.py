@@ -94,6 +94,17 @@ KeycloakStack(
     rds_instance_class=settings.rds_instance_class,
     rds_instance_size=settings.rds_instance_size,
     ecs_health_check_grace_period=settings.ecs_health_check_grace_period,
+    # SMTP settings for email verification
+    smtp_host=settings.smtp_host,
+    smtp_port=settings.smtp_port,
+    smtp_from=settings.smtp_from,
+    smtp_from_display_name=settings.smtp_from_display_name,
+    smtp_reply_to=settings.smtp_reply_to,
+    smtp_ssl=settings.smtp_ssl,
+    smtp_starttls=settings.smtp_starttls,
+    smtp_auth=settings.smtp_auth,
+    smtp_user=settings.smtp_user,
+    smtp_password=settings.smtp_password,
     # Stack Configuration
     env={
         "account": settings.aws_account_id,

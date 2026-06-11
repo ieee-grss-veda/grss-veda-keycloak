@@ -67,8 +67,9 @@ identityProviderMappers:
       syncMode: "FORCE"
       group: $(env:JUPYTERHUB_DEFAULT_GROUP:-JupyterHub Basic User)
 
-# Login Flow Configuration - auto-redirect to GitHub
-browserFlow: Browser without Password
+# Login Flow Configuration - show choice between GitHub SSO and Guest login
+# Flow definitions are in veda.yaml; this just activates the browser choice flow
+browserFlow: Browser with Choice
 authenticationFlows:
   # Post-broker login flow for email whitelist checking
   # Whitelist is managed via 'ssoEmailWhitelist' realm attribute (Admin REST API)
@@ -82,68 +83,3 @@ authenticationFlows:
         authenticatorFlow: false
         requirement: REQUIRED
         priority: 10
-  - alias: Browser without Password
-    description: browser based authentication without username password form
-    providerId: basic-flow
-    topLevel: true
-    builtIn: false
-    authenticationExecutions:
-      - authenticator: auth-cookie
-        authenticatorFlow: false
-        requirement: ALTERNATIVE
-        priority: 10
-        autheticatorFlow: false
-        userSetupAllowed: false
-      - authenticator: auth-spnego
-        authenticatorFlow: false
-        requirement: DISABLED
-        priority: 20
-        autheticatorFlow: false
-        userSetupAllowed: false
-      - authenticatorFlow: true
-        requirement: ALTERNATIVE
-        priority: 30
-        autheticatorFlow: true
-        flowAlias: Browser without Password forms
-        userSetupAllowed: false
-  - alias: Browser without Password forms
-    description: Username, password, otp and other auth forms.
-    providerId: basic-flow
-    topLevel: false
-    builtIn: false
-    authenticationExecutions:
-      - authenticatorConfig: github
-        authenticator: identity-provider-redirector
-        authenticatorFlow: false
-        requirement: REQUIRED
-        priority: 20
-        autheticatorFlow: false
-        userSetupAllowed: false
-      - authenticatorFlow: true
-        requirement: CONDITIONAL
-        priority: 21
-        autheticatorFlow: true
-        flowAlias: Browser without Password Browser - Conditional OTP
-        userSetupAllowed: false
-  - alias: Browser without Password Browser - Conditional OTP
-    description: Flow to determine if the OTP is required for the authentication
-    providerId: basic-flow
-    topLevel: false
-    builtIn: false
-    authenticationExecutions:
-      - authenticator: conditional-user-configured
-        authenticatorFlow: false
-        requirement: REQUIRED
-        priority: 10
-        autheticatorFlow: false
-        userSetupAllowed: false
-      - authenticator: auth-otp-form
-        authenticatorFlow: false
-        requirement: REQUIRED
-        priority: 20
-        autheticatorFlow: false
-        userSetupAllowed: false
-authenticatorConfig:
-  - alias: github
-    config:
-      defaultProvider: github

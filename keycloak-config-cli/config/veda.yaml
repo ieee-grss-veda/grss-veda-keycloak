@@ -6,6 +6,33 @@ realm: veda
 displayName: Applications
 displayNameHtml: GRSS VEDA Ecosystem
 loginTheme: veda
+emailTheme: veda
+
+# Enable guest user registration
+registrationAllowed: true
+registrationEmailAsUsername: true
+registrationFlow: registration with invitation code
+verifyEmail: true
+browserFlow: browser
+
+# Invitation codes for guest user registration are managed via Admin REST API
+# (not declared here — config-cli would overwrite runtime changes on each deploy).
+# Use set-invitation-codes.sh to view/update codes.
+# JSON format: {"CODE": {"groupName": "Group Name", "enabled": true, "description": "..."}}
+
+# SMTP server for email verification and notifications
+# Set SMTP_* env vars per environment (GitHub Actions secrets / docker-compose)
+smtpServer:
+  host: $(env:SMTP_HOST)
+  port: $(env:SMTP_PORT:-587)
+  from: $(env:SMTP_FROM)
+  fromDisplayName: $(env:SMTP_FROM_DISPLAY_NAME:-GRSS VEDA)
+  replyTo: $(env:SMTP_REPLY_TO:-"")
+  ssl: $(env:SMTP_SSL:-false)
+  starttls: $(env:SMTP_STARTTLS:-true)
+  auth: $(env:SMTP_AUTH:-true)
+  user: $(env:SMTP_USER:-"")
+  password: $(env:SMTP_PASSWORD:-"")
 
 clients:
   - clientId: account-console
@@ -17,7 +44,7 @@ clients:
     standardFlowEnabled: true
     fullScopeAllowed: true
     attributes:
-      post.logout.redirect.uris: "+"
+      post.logout.redirect.uris: '+'
     redirectUris:
       - $(env:ACCOUNT_CONSOLE_URL)/*
     webOrigins:
@@ -35,11 +62,11 @@ clients:
     publicClient: true
     alwaysDisplayInConsole: true
     attributes:
-      post.logout.redirect.uris: "+"
+      post.logout.redirect.uris: '+'
     redirectUris:
       - $(env:STAC_CLIENT_URL)/*
     webOrigins:
-      - "+"
+      - '+'
     protocol: openid-connect
     fullScopeAllowed: true
     defaultClientScopes:
@@ -84,12 +111,12 @@ clients:
     publicClient: true
     alwaysDisplayInConsole: true
     attributes:
-      "access.token.lifespan": "3600"
-      post.logout.redirect.uris: "+"
+      'access.token.lifespan': '3600'
+      post.logout.redirect.uris: '+'
     redirectUris:
       - $(env:INGEST_API_CLIENT_URL)/*
     webOrigins:
-      - "+"
+      - '+'
     protocol: openid-connect
     fullScopeAllowed: true
     defaultClientScopes:
@@ -135,7 +162,7 @@ clients:
     publicClient: false
     alwaysDisplayInConsole: true
     attributes:
-      post.logout.redirect.uris: "+"
+      post.logout.redirect.uris: '+'
     redirectUris:
       - $(env:INGEST_UI_CLIENT_URL)/*
     webOrigins:
@@ -160,7 +187,7 @@ clients:
     publicClient: false
     alwaysDisplayInConsole: true
     attributes:
-      post.logout.redirect.uris: "+"
+      post.logout.redirect.uris: '+'
     redirectUris:
       - $(env:AIRFLOW_CLIENT_URL)/*
     webOrigins:
@@ -208,30 +235,30 @@ clients:
           user.attribute: username
           claim.name: preferred_username
           jsonType.label: String
-          id.token.claim: "true"
-          access.token.claim: "true"
-          userinfo.token.claim: "true"
+          id.token.claim: 'true'
+          access.token.claim: 'true'
+          userinfo.token.claim: 'true'
       - name: groups
         protocol: openid-connect
         protocolMapper: oidc-group-membership-mapper
         config:
-          full.path: "false"
-          id.token.claim: "true"
-          access.token.claim: "true"
+          full.path: 'false'
+          id.token.claim: 'true'
+          access.token.claim: 'true'
           claim.name: groups
-          userinfo.token.claim: "true"
+          userinfo.token.claim: 'true'
       - name: client-roles-claim
         protocol: openid-connect
         protocolMapper: oidc-usermodel-client-role-mapper
         config:
-          access.token.claim: "true"
-          userinfo.token.claim: "true"
-          id.token.claim: "true"
+          access.token.claim: 'true'
+          userinfo.token.claim: 'true'
+          id.token.claim: 'true'
           claim.name: roles
           jsonType.label: String
-          multivalued: "true"
+          multivalued: 'true'
           usermodel.clientRoleMapping.clientId: jupyterhub
-          usermodel.clientRoleMapping.rolePrefix: ""
+          usermodel.clientRoleMapping.rolePrefix: ''
 
   - clientId: monitoring
     name: VEDA Monitoring
@@ -244,7 +271,7 @@ clients:
     redirectUris:
       - $(env:MONITORING_CLIENT_URL)/*
     webOrigins:
-      - "+"
+      - '+'
     protocol: openid-connect
     fullScopeAllowed: true
     defaultClientScopes:
@@ -301,8 +328,6 @@ roles:
         description: Editor role for managing monitoring
       - name: Viewer
         description: Viewer role for basic access to monitoring
-
-
 
 clientScopeMappings:
   stac:
@@ -390,19 +415,95 @@ clientScopes:
     description: Group membership information
     protocol: openid-connect
     attributes:
-      include.in.token.scope: "true"
-      display.on.consent.screen: "true"
+      include.in.token.scope: 'true'
+      display.on.consent.screen: 'true'
     protocolMappers:
       - name: groups
         protocol: openid-connect
         protocolMapper: oidc-group-membership-mapper
         consentRequired: false
         config:
-          full.path: "false"
-          id.token.claim: "true"
-          access.token.claim: "true"
+          full.path: 'false'
+          id.token.claim: 'true'
+          access.token.claim: 'true'
           claim.name: groups
-          userinfo.token.claim: "true"
+          userinfo.token.claim: 'true'
+
+# Custom registration flow with invitation code validation
+authenticationFlows:
+  - alias: registration with invitation code
+    description: Registration flow with invitation code validation
+    providerId: basic-flow
+    topLevel: true
+    builtIn: false
+    authenticationExecutions:
+      - authenticator: registration-page-form
+        requirement: REQUIRED
+        priority: 10
+        authenticatorFlow: true
+        flowAlias: invitation code registration form
+
+  - alias: invitation code registration form
+    description: Registration form with invitation code
+    providerId: form-flow
+    topLevel: false
+    builtIn: false
+    authenticationExecutions:
+      - authenticator: registration-user-creation
+        requirement: REQUIRED
+        priority: 20
+      - authenticator: registration-password-action
+        requirement: REQUIRED
+        priority: 40
+      - authenticator: invitation-code-validation
+        requirement: REQUIRED
+        priority: 50
+      - authenticator: registration-recaptcha-action
+        requirement: DISABLED
+        priority: 60
+
+  # Browser flow with login choice (SSO or guest login)
+  # Defined here so all flows are in one place; env-specific files set browserFlow to activate
+  - alias: Browser with Choice
+    description: Choose between SSO or Guest login
+    providerId: basic-flow
+    topLevel: true
+    builtIn: false
+    authenticationExecutions:
+      - authenticator: auth-cookie
+        requirement: ALTERNATIVE
+        priority: 10
+      - authenticatorFlow: true
+        flowAlias: Choice Forms
+        requirement: ALTERNATIVE
+        priority: 20
+
+  - alias: Choice Forms
+    description: Username/password forms
+    providerId: basic-flow
+    topLevel: false
+    builtIn: false
+    authenticationExecutions:
+      - authenticator: auth-username-password-form
+        requirement: REQUIRED
+        priority: 10
+      - authenticatorFlow: true
+        flowAlias: Choice Conditional OTP
+        requirement: CONDITIONAL
+        priority: 20
+
+  - alias: Choice Conditional OTP
+    description: Flow to determine if the OTP is required for the authentication
+    providerId: basic-flow
+    topLevel: false
+    builtIn: false
+    authenticationExecutions:
+      - authenticator: conditional-user-configured
+        requirement: REQUIRED
+        priority: 10
+      - authenticator: auth-otp-form
+        requirement: REQUIRED
+        priority: 20
 
 groups:
   - name: System Administrators
@@ -444,7 +545,7 @@ groups:
     clientRoles:
       veda-airflow:
         - Launcher
-  
+
   - name: JupyterHub Admin
     clientRoles:
       jupyterhub:
@@ -482,6 +583,27 @@ groups:
       monitoring:
         - Viewer
 
+  # Guest user groups
+  - name: Guest Users - Basic
+    clientRoles:
+      stac:
+        - Editor
+      jupyterhub:
+        - CPU:XS
+        - CPU:S
+
+  - name: Guest Users - Researcher
+    clientRoles:
+      stac:
+        - Editor
+      ingest-api:
+        - Editor
+      jupyterhub:
+        - CPU:XS
+        - CPU:S
+        - CPU:M
+        - CPU:L
+
 users:
   - username: service-account-airflow-stac-etl
     emailVerified: true
@@ -489,11 +611,11 @@ users:
     serviceAccountClientId: airflow-stac-etl
     clientRoles:
       stac:
-      - Admin
+        - Admin
   - username: service-account-airflow-ingest-api-etl
     emailVerified: true
     enabled: true
     serviceAccountClientId: airflow-ingest-api-etl
     clientRoles:
       ingest-api:
-      - Admin
+        - Admin
