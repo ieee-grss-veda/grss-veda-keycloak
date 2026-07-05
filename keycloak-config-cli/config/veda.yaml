@@ -281,6 +281,31 @@ clients:
       - roles
       - profile
 
+  - clientId: credit-ui
+    name: Credit Console
+    rootUrl: $(env:CREDIT_UI_CLIENT_URL)
+    baseUrl: $(env:CREDIT_UI_CLIENT_URL)
+    secret: $(env:CREDIT_UI_CLIENT_SECRET)
+    publicClient: false
+    alwaysDisplayInConsole: true
+    attributes:
+      post.logout.redirect.uris: '+'
+    redirectUris:
+      - $(env:CREDIT_UI_CLIENT_URL)/api/auth/callback/keycloak
+      - $(env:CREDIT_UI_CLIENT_URL)/*
+    webOrigins:
+      - $(env:CREDIT_UI_CLIENT_URL)
+    protocol: openid-connect
+    standardFlowEnabled: true
+    fullScopeAllowed: true
+    defaultClientScopes:
+      - web-origins
+      - acr
+      - profile
+      - roles
+      - basic
+      - email
+
 roles:
   client:
     stac:
@@ -328,6 +353,15 @@ roles:
         description: Editor role for managing monitoring
       - name: Viewer
         description: Viewer role for basic access to monitoring
+    credit-ui:
+      - name: platform_admin
+        description: Operates the credit platform across all projects
+      - name: project_admin
+        description: PI — manages projects, groups & allocations
+      - name: group_admin
+        description: Redistributes group balance to members
+      - name: research_user
+        description: Standard credit console user
 
 clientScopeMappings:
   stac:
@@ -603,6 +637,23 @@ groups:
         - CPU:S
         - CPU:M
         - CPU:L
+
+  - name: Credit Platform Admins
+    clientRoles:
+      credit-ui:
+        - platform_admin
+  - name: Credit Project Leads
+    clientRoles:
+      credit-ui:
+        - project_admin
+  - name: Credit Group Leads
+    clientRoles:
+      credit-ui:
+        - group_admin
+  - name: Credit Users
+    clientRoles:
+      credit-ui:
+        - research_user
 
 users:
   - username: service-account-airflow-stac-etl
