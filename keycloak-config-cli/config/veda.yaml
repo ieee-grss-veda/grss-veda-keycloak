@@ -281,20 +281,20 @@ clients:
       - roles
       - profile
 
-  - clientId: credit-ui
+  - clientId: credits
     name: Credit Console
-    rootUrl: $(env:CREDIT_UI_CLIENT_URL)
-    baseUrl: $(env:CREDIT_UI_CLIENT_URL)
-    secret: $(env:CREDIT_UI_CLIENT_SECRET)
+    rootUrl: $(env:CREDITS_CLIENT_URL)
+    baseUrl: $(env:CREDITS_CLIENT_URL)
+    secret: $(env:CREDITS_CLIENT_SECRET)
     publicClient: false
     alwaysDisplayInConsole: true
     attributes:
       post.logout.redirect.uris: '+'
     redirectUris:
-      - $(env:CREDIT_UI_CLIENT_URL)/api/auth/callback/keycloak
-      - $(env:CREDIT_UI_CLIENT_URL)/*
+      - $(env:CREDITS_CLIENT_URL)/api/auth/callback/keycloak
+      - $(env:CREDITS_CLIENT_URL)/*
     webOrigins:
-      - $(env:CREDIT_UI_CLIENT_URL)
+      - $(env:CREDITS_CLIENT_URL)
     protocol: openid-connect
     standardFlowEnabled: true
     fullScopeAllowed: true
@@ -305,6 +305,22 @@ clients:
       - roles
       - basic
       - email
+    protocolMappers:
+      # Emit the user's `credits` client roles as a flat top-level `roles` claim
+      # (same pattern as the jupyterhub client). The Credit Console reads this to
+      # derive the active persona.
+      - name: client-roles-claim
+        protocol: openid-connect
+        protocolMapper: oidc-usermodel-client-role-mapper
+        config:
+          access.token.claim: 'true'
+          userinfo.token.claim: 'true'
+          id.token.claim: 'true'
+          claim.name: roles
+          jsonType.label: String
+          multivalued: 'true'
+          usermodel.clientRoleMapping.clientId: credits
+          usermodel.clientRoleMapping.rolePrefix: ''
 
 roles:
   client:
@@ -353,14 +369,14 @@ roles:
         description: Editor role for managing monitoring
       - name: Viewer
         description: Viewer role for basic access to monitoring
-    credit-ui:
-      - name: platform_admin
+    credits:
+      - name: PlatformAdmin
         description: Operates the credit platform across all projects
-      - name: project_admin
+      - name: ProjectAdmin
         description: PI — manages projects, groups & allocations
-      - name: group_admin
+      - name: GroupAdmin
         description: Redistributes group balance to members
-      - name: research_user
+      - name: ResearchUser
         description: Standard credit console user
 
 clientScopeMappings:
@@ -640,20 +656,20 @@ groups:
 
   - name: Credit Platform Admins
     clientRoles:
-      credit-ui:
-        - platform_admin
+      credits:
+        - PlatformAdmin
   - name: Credit Project Leads
     clientRoles:
-      credit-ui:
-        - project_admin
+      credits:
+        - ProjectAdmin
   - name: Credit Group Leads
     clientRoles:
-      credit-ui:
-        - group_admin
+      credits:
+        - GroupAdmin
   - name: Credit Users
     clientRoles:
-      credit-ui:
-        - research_user
+      credits:
+        - ResearchUser
 
 users:
   - username: service-account-airflow-stac-etl
