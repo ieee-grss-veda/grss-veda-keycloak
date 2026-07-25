@@ -83,10 +83,19 @@ if [[ "$EMAILS_PROVIDED" == true ]]; then
   echo "Token obtained. Setting SSO email whitelist..."
   echo "Whitelist: ${EMAILS}"
 
+  # Fetch the full current attributes map and merge only ssoEmailWhitelist into it.
+  # A Keycloak realm PUT replaces the entire attributes map, so we must re-send the
+  # existing attributes (e.g. invitation_codes) or they would be wiped.
+  CURRENT_ATTRS=$(curl -sf "${KEYCLOAK_HOST}/admin/realms/veda" \
+    -H "Authorization: Bearer ${TOKEN}" | jq '.attributes // {}')
+
+  PAYLOAD=$(echo "$CURRENT_ATTRS" | jq --arg v "$EMAILS" \
+    '{attributes: (. + {ssoEmailWhitelist: $v})}')
+
   HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X PUT "${KEYCLOAK_HOST}/admin/realms/veda" \
     -H "Authorization: Bearer ${TOKEN}" \
     -H "Content-Type: application/json" \
-    -d "{\"attributes\":{\"ssoEmailWhitelist\":\"${EMAILS}\"}}")
+    -d "$PAYLOAD")
 
   if [[ "$HTTP_CODE" -ge 200 && "$HTTP_CODE" -lt 300 ]]; then
     echo "Success! Email whitelist updated (HTTP ${HTTP_CODE})."
