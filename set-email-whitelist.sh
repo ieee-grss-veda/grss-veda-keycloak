@@ -16,11 +16,14 @@ Required:
 Optional (omit both to view current whitelist):
   --emails     CSV     Comma-separated email patterns (e.g. "user@example.com,*@nasa.gov"). Use "" to clear.
   --file       PATH    Path to a file containing email patterns (one per line or comma-separated)
+  --append             Merge the provided patterns into the existing whitelist instead of
+                       replacing it (duplicates are removed, existing order preserved).
 
 Example:
   $(basename "$0") --host https://keycloak.example.com --username admin --password secret
   $(basename "$0") --host https://keycloak.example.com --username admin --password secret --emails "user@example.com,*@nasa.gov"
   $(basename "$0") --host https://keycloak.example.com --username admin --password secret --file whitelist.txt
+  $(basename "$0") --host https://keycloak.example.com --username admin --password secret --append --emails "*@nasa.gov"
 EOF
   exit 1
 }
@@ -31,6 +34,7 @@ ADMIN_PASS=""
 EMAILS=""
 EMAIL_FILE=""
 EMAILS_PROVIDED=false
+APPEND=false
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -39,6 +43,7 @@ while [[ $# -gt 0 ]]; do
     --password) ADMIN_PASS="$2";    shift 2 ;;
     --emails)   EMAILS="$2"; EMAILS_PROVIDED=true; shift 2 ;;
     --file)     EMAIL_FILE="$2";    shift 2 ;;
+    --append)   APPEND=true;        shift ;;
     -h|--help)  usage ;;
     *)          echo "Unknown option: $1"; usage ;;
   esac
@@ -63,6 +68,12 @@ if [[ -n "$EMAIL_FILE" ]]; then
     | paste -sd ',' -)
 fi
 
+# --append only makes sense when new patterns are supplied
+if [[ "$APPEND" == true && "$EMAILS_PROVIDED" != true ]]; then
+  echo "Error: --append requires --emails or --file to provide patterns to append."
+  usage
+fi
+
 # Strip trailing slash from host
 KEYCLOAK_HOST="${KEYCLOAK_HOST%/}"
 
@@ -80,14 +91,28 @@ if [[ -z "$TOKEN" || "$TOKEN" == "null" ]]; then
 fi
 
 if [[ "$EMAILS_PROVIDED" == true ]]; then
-  echo "Token obtained. Setting SSO email whitelist..."
-  echo "Whitelist: ${EMAILS}"
+  echo "Token obtained."
 
   # Fetch the full current attributes map and merge only ssoEmailWhitelist into it.
   # A Keycloak realm PUT replaces the entire attributes map, so we must re-send the
   # existing attributes (e.g. invitation_codes) or they would be wiped.
   CURRENT_ATTRS=$(curl -sf "${KEYCLOAK_HOST}/admin/realms/veda" \
     -H "Authorization: Bearer ${TOKEN}" | jq '.attributes // {}')
+
+  # In append mode, prepend the existing whitelist so the new patterns are merged
+  # into it. Duplicates are dropped and the first-seen order is preserved.
+  if [[ "$APPEND" == true ]]; then
+    EXISTING=$(echo "$CURRENT_ATTRS" | jq -r '.ssoEmailWhitelist // ""')
+    EMAILS=$(printf '%s,%s' "$EXISTING" "$EMAILS" \
+      | tr ',' '\n' \
+      | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' \
+      | grep -v '^$' \
+      | awk '!seen[$0]++' \
+      | paste -sd ',' -)
+  fi
+
+  echo "Setting SSO email whitelist..."
+  echo "Whitelist: ${EMAILS}"
 
   PAYLOAD=$(echo "$CURRENT_ATTRS" | jq --arg v "$EMAILS" \
     '{attributes: (. + {ssoEmailWhitelist: $v})}')
