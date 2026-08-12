@@ -25,7 +25,7 @@ services:
     build:
       context: ./keycloak-config-cli
       args:
-        KEYCLOAK_CONFIG_CLI_VERSION: latest
+        KEYCLOAK_CONFIG_CLI_VERSION: latest-26
     depends_on:
       - keycloak
     environment:
@@ -55,6 +55,10 @@ services:
       GRAFANA_CLIENT_URL: http://localhost:3000
       CILOGON_CLIENT_ID: abc13
       CILOGON_CLIENT_SECRET: abc123
+      CREDITS_CLIENT_URL: http://localhost:8001
+      CREDITS_CLIENT_SECRET: credits-secret
+      CREDITS_ADMIN_CLIENT_SECRET: credits-admin-secret
+      NEXTAUTH_SECRET: mysecret
       # Mock secrets for SAML IDP (staging/prod testing)
       # Uncomment and set these when testing SAML locally
       # SAML_ENTITY_ID: https://mock-idp.example.com/metadata

@@ -321,6 +321,19 @@ clients:
           multivalued: 'true'
           usermodel.clientRoleMapping.clientId: credits
           usermodel.clientRoleMapping.rolePrefix: ''
+  - clientId: credits-admin
+    name: Credit Service Admin
+    secret: $(env:CREDITS_ADMIN_CLIENT_SECRET)
+    publicClient: false
+    attributes: {}
+    protocol: openid-connect
+    fullScopeAllowed: true
+    standardFlowEnabled: false
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: false
+    serviceAccountsEnabled: true
+    defaultClientScopes:
+      - roles
 
 roles:
   client:
@@ -686,3 +699,13 @@ users:
     clientRoles:
       ingest-api:
         - Admin
+  - username: service-account-credits-admin
+    emailVerified: true
+    enabled: true
+    serviceAccountClientId: credits-admin
+    clientRoles:
+      realm-management:
+        - manage-users
+        - view-users
+        - query-groups
+        - view-realm
