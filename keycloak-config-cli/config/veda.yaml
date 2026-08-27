@@ -15,6 +15,12 @@ registrationFlow: registration with invitation code
 verifyEmail: true
 browserFlow: browser
 
+# Required for the UPDATE_PASSWORD action-email link (admin-invited users,
+# password resets) to route into the credential-reset form instead of the
+# plain login form — which the invitee can never pass, having no credentials
+# yet. Also enables the ordinary self-service "forgot password" link.
+resetPasswordAllowed: true
+
 # Invitation codes for guest user registration are managed via Admin REST API
 # (not declared here — config-cli would overwrite runtime changes on each deploy).
 # Use set-invitation-codes.sh to view/update codes.
