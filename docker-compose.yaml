@@ -25,40 +25,61 @@ services:
     build:
       context: ./keycloak-config-cli
       args:
-        KEYCLOAK_CONFIG_CLI_VERSION: latest-26
+        # Must match the Keycloak version above — the `latest` tag is built against a
+        # newer RealmRepresentation and sends fields (e.g. webAuthnPolicyPasswordlessPasskeysEnabled)
+        # that Keycloak 26.1.x rejects with HTTP 400.
+        KEYCLOAK_CONFIG_CLI_VERSION: 6.5.1-26.1.0
     depends_on:
       - keycloak
     environment:
       KEYCLOAK_URL: http://keycloak:8080
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
-      KEYCLOAK_AVAILABILITYCHECK_ENABLED: "true"
+      KEYCLOAK_AVAILABILITYCHECK_ENABLED: 'true'
       KEYCLOAK_AVAILABILITYCHECK_TIMEOUT: 120s
       # IMPORT_FILES_LOCATIONS controls which config files are loaded
       # For dev (default): base files + dev overrides (GitHub IDP)
       # For staging/prod: base files + environment overrides (SAML IDP)
       # For local testing: /config/master.yaml,/config/master.local.yaml,/config/veda.yaml,/config/veda.local.yaml
       IMPORT_FILES_LOCATIONS: ${IMPORT_FILES_LOCATIONS:-/config/master.yaml,/config/master.local.yaml,/config/veda.yaml,/config/veda.local.yaml}
-      IMPORT_CACHE_ENABLED: "false"
-      IMPORT_VARSUBSTITUTION_ENABLED: "true"
+      IMPORT_CACHE_ENABLED: 'false'
+      IMPORT_VARSUBSTITUTION_ENABLED: 'true'
       # Invitation codes are managed via Admin REST API (set-invitation-codes.sh), not env vars
       # SMTP config for email verification (uses Mailpit for local dev)
       SMTP_HOST: mailpit
-      SMTP_PORT: "1025"
+      SMTP_PORT: '1025'
       SMTP_FROM: noreply@veda.local
       SMTP_FROM_DISPLAY_NAME: GRSS VEDA
-      SMTP_SSL: "false"
-      SMTP_STARTTLS: "false"
-      SMTP_AUTH: "false"
+      SMTP_SSL: 'false'
+      SMTP_STARTTLS: 'false'
+      SMTP_AUTH: 'false'
       # Mock secrets for GitHub IDP (dev)
       GRAFANA_CLIENT_SECRET: mock_grafana_client_secret
       GRAFANA_CLIENT_URL: http://localhost:3000
       CILOGON_CLIENT_ID: abc13
       CILOGON_CLIENT_SECRET: abc123
-      CREDITS_CLIENT_URL: http://localhost:8001
-      CREDITS_CLIENT_SECRET: credits-secret
-      CREDITS_ADMIN_CLIENT_SECRET: credits-admin-secret
+      CREDITS_CLIENT_URL: http://localhost:3000
+      CREDITS_CLIENT_SECRET: abc123
+      CREDITS_ADMIN_CLIENT_SECRET: abc123
       NEXTAUTH_SECRET: mysecret
+      ACCOUNT_CONSOLE_URL: http://localhost:8080/realms/veda/account
+      STAC_CLIENT_URL: https://localhost:3000
+      AIRFLOW_CLIENT_URL: http://localhost:8081
+      AIRFLOW_INGEST_API_ETL_CLIENT_SECRET: abc123
+      AIRFLOW_STAC_ETL_CLIENT_SECRET: abc123
+      VEDA_AIRFLOW_CLIENT_SECRET: abc123
+      INGEST_API_CLIENT_URL: http://localhost:8000
+      INGEST_UI_CLIENT_URL: http://localhost:3001
+      INGEST_UI_CLIENT_SECRET: abc123
+      JUPYTERHUB_CLIENT_URL: http://localhost:8000
+      JUPYTERHUB_CLIENT_SECRET: abc123
+      MONITORING_CLIENT_URL: http://localhost:3002
+      MONITORING_CLIENT_SECRET: abc123
+      # SAML SP config used by veda.local.yaml's mock SAML IDP client
+      VEDA_SAML_SP_ENTITY_ID: http://localhost:8080/realms/veda
+      VEDA_SAML_IDP_ENTITY_ID: https://mock-idp.example.com/metadata
+      VEDA_SAML_SSO_URL: https://mock-idp.example.com/sso
+      VEDA_SAML_SIGNING_CERTIFICATE: ''
       # Mock secrets for SAML IDP (staging/prod testing)
       # Uncomment and set these when testing SAML locally
       # SAML_ENTITY_ID: https://mock-idp.example.com/metadata
@@ -77,13 +98,13 @@ services:
       # MASTER_ADMIN_PASSWORD: admin123
     env_file:
       - .env
-    restart: "no"
+    restart: 'no'
 
   mailpit:
     image: axllent/mailpit
     ports:
-      - 1025:1025  # SMTP
-      - 8025:8025  # Web UI to view emails
+      - 1025:1025 # SMTP
+      - 8025:8025 # Web UI to view emails
 
   grafana:
     profiles:
@@ -92,12 +113,12 @@ services:
     ports:
       - 3000:3000
     environment:
-      GF_AUTH_DISABLE_LOGIN_FORM: "true"
-      GF_AUTH_GENERIC_OAUTH_ENABLED: "true"
-      GF_AUTH_GENERIC_OAUTH_ALLOW_SIGN_UP: "true"
-      GF_AUTH_GENERIC_OAUTH_AUTO_LOGIN: "false"
-      GF_AUTH_GENERIC_OAUTH_NAME: "VEDA Keycloak"
-      GF_AUTH_GENERIC_OAUTH_SCOPES: "openid profile email"
+      GF_AUTH_DISABLE_LOGIN_FORM: 'true'
+      GF_AUTH_GENERIC_OAUTH_ENABLED: 'true'
+      GF_AUTH_GENERIC_OAUTH_ALLOW_SIGN_UP: 'true'
+      GF_AUTH_GENERIC_OAUTH_AUTO_LOGIN: 'false'
+      GF_AUTH_GENERIC_OAUTH_NAME: 'VEDA Keycloak'
+      GF_AUTH_GENERIC_OAUTH_SCOPES: 'openid profile email'
       # Role Mapping
       GF_AUTH_GENERIC_OAUTH_AUTO_ASSIGN_ORG_ROLE: Admin
       # Auth server details
