@@ -141,9 +141,14 @@ fetch_current_codes() {
 # Update the invitation_codes realm attribute
 update_codes() {
   local codes_json="$1"
-  # Use jq to safely build the outer JSON payload with the inner JSON as a string value
-  local payload
-  payload=$(jq -n --arg codes "$codes_json" '{"attributes":{"invitation_codes": $codes}}')
+  # Fetch the full current attributes map and merge only invitation_codes into it.
+  # A Keycloak realm PUT replaces the entire attributes map, so we must re-send the
+  # existing attributes (e.g. ssoEmailWhitelist) or they would be wiped.
+  local current_attrs payload
+  current_attrs=$(curl -sf "${KEYCLOAK_HOST}/admin/realms/veda" \
+    -H "Authorization: Bearer ${TOKEN}" | jq '.attributes // {}')
+  payload=$(echo "$current_attrs" | jq --arg codes "$codes_json" \
+    '{attributes: (. + {invitation_codes: $codes})}')
 
   HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X PUT "${KEYCLOAK_HOST}/admin/realms/veda" \
     -H "Authorization: Bearer ${TOKEN}" \
